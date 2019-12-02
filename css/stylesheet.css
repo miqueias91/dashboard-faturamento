@@ -1,0 +1,93 @@
+@font-face {
+  font-family: "Cerebri Sans";
+  src: url(../fonts/Cerebri-Sans/CerebriSans-Light.eot);
+  src: url(../fonts/Cerebri-Sans/CerebriSans-Light.ttf);
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Cerebri Sans";
+  src: url(../fonts/Cerebri-Sans/CerebriSans-Regular.eot);
+  src: url(../fonts/Cerebri-Sans/CerebriSans-Regular.ttf);
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Cerebri Sans";
+  src: url(../fonts/Cerebri-Sans/CerebriSans-Bold.eot);
+  src: url(../fonts/Cerebri-Sans/CerebriSans-Bold.ttf);
+  font-weight: 700;
+  font-style: normal;
+}
+
+body {
+    font-family: Cerebri Sans,sans-serif!important;
+    font-size: .9375rem!important;
+    font-weight: 400!important;
+    line-height: 1.5!important;
+    margin: 0!important;
+    text-align: left!important;
+    color: #12263f!important;
+    background-color: #f9fbfd!important;
+    overflow-x: hidden!important;
+    font-size: 15px!important;
+}
+
+h1 {
+    font-size: 15px!important;
+}
+
+.form-control {
+    font-size: .9375rem!important;
+    line-height: 1.5!important;
+    padding: .5rem .75rem!important;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out!important;
+    color: #12263f!important;
+    border: 1px solid #909599!important;
+    border-radius: .375rem!important;
+    background-color: #fff!important;
+    background-clip: padding-box!important;
+    text-align: left;
+}
+
+.btn-lg {
+    font-size: 1.0625rem!important;
+    line-height: 1.5!important;
+    padding: .5rem 1rem!important;
+    border-radius: .5rem!important;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #212529;
+    border-color: #212529;
+}
+.btn-primary:hover {
+    color: #fff;
+    background-color: #343a40!important;
+    border-color: #212529;
+}
+.starter-template {
+  padding: 0 1.5rem 3rem 1.5rem!important;
+  text-align: center!important;
+}
+.bd-placeholder-img {
+  font-size: 1.125rem!important;
+  text-anchor: middle!important;
+  -webkit-user-select: none!important;
+  -moz-user-select: none!important;
+  -ms-user-select: none!important;
+  user-select: none!important;
+}
+
+@media (min-width: 768px) {
+  .bd-placeholder-img-lg {
+    font-size: 3.5rem!important;
+  }
+}
+
+main {
+  margin-top: 50px;
+}
