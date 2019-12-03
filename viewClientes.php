@@ -60,7 +60,7 @@
         <form method=post name='form' id='form' enctype='multipart/form-data' action="cadastrarCliente.php">
             <div class="row">
               <div class="col-md6">
-                <button class="btn btn-lg btn-primary btn-block" id="novoCliente" type="button" href="#">Cadastar novo cliente</button>
+                <button class="btn btn-lg btn-primary btn-block" id="novoCliente" type="button" href="#"><i class="fas fa-plus-circle"></i> Cadastar novo cliente</button>
               </div>
             </div>
             <br>

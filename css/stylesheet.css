@@ -24,7 +24,6 @@
 
 body {
     font-family: Cerebri Sans,sans-serif!important;
-    font-size: .9375rem!important;
     font-weight: 400!important;
     line-height: 1.5!important;
     margin: 0!important;
@@ -32,15 +31,15 @@ body {
     color: #12263f!important;
     background-color: #f9fbfd!important;
     overflow-x: hidden!important;
-    font-size: 15px!important;
+    font-size: 12px!important;
 }
 
-h1 {
-    font-size: 15px!important;
+h1, h2, a, table{
+  font-size: 12px!important;
 }
 
 .form-control {
-    font-size: .9375rem!important;
+    font-size: 12px!important;
     line-height: 1.5!important;
     padding: .5rem .75rem!important;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out!important;
@@ -53,7 +52,7 @@ h1 {
 }
 
 .btn-lg {
-    font-size: 1.0625rem!important;
+    font-size: 12px!important;
     line-height: 1.5!important;
     padding: .5rem 1rem!important;
     border-radius: .5rem!important;
@@ -74,7 +73,7 @@ h1 {
   text-align: center!important;
 }
 .bd-placeholder-img {
-  font-size: 1.125rem!important;
+  font-size: 12px!important;
   text-anchor: middle!important;
   -webkit-user-select: none!important;
   -moz-user-select: none!important;
@@ -84,7 +83,7 @@ h1 {
 
 @media (min-width: 768px) {
   .bd-placeholder-img-lg {
-    font-size: 3.5rem!important;
+    font-size: 12px!important;
   }
 }
 

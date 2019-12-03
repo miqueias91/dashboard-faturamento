@@ -1,11 +1,13 @@
 <?php
     include_once("./verifica.php");
     include_once("./config/config.php");
-    include_once("$base/class/class.servico.php");
+    include_once("$base/class/class.cliente.php");
+    include_once("$base/class/class.mascara.php");
 
-    $ser = new Servico();
+    $cli = new Cliente();
+    $m = new Mascara();
 
-    $dados = $ser->buscaServico();
+    $dados = $cli->buscaCliente();
 
 
 ?>
@@ -38,14 +40,14 @@
   </head>
   <body>
     <script type="text/javascript">
-        function editarServico(id_servico) {
-            $("#form").attr('action','editarServico.php?id_servico='+id_servico);
+        function editarCliente(id_cliente) {
+            $("#form").attr('action','editarCliente.php?id_cliente='+id_cliente);
             $("#form").submit();
             return true;
         }
         $( document ).ready(function() {
-            $('#novoServico').click(function(){
-                $("#form").attr('action','cadastrarServico.php');
+            $('#novoCliente').click(function(){
+                $("#form").attr('action','cadastrarCliente.php');
                 $("#form").submit();
                 return true;
             });
@@ -55,20 +57,25 @@
     <main role="main" class="container">
 
       <div class="starter-template">
-        <form method=post name='form' id='form' enctype='multipart/form-data' action="cadastrarServico.php">
+        <form method=post name='form' id='form' enctype='multipart/form-data' action="cadastrarCliente.php">
             <div class="row">
               <div class="col-md6">
-                <button class="btn btn-lg btn-primary btn-block" id="novoServico" type="button" href="#"><i class="fas fa-plus-circle"></i> Cadastar novo serviço</button>
+                <button class="btn btn-lg btn-primary btn-block" id="novoCliente" type="button" href="#"><i class="fas fa-plus-circle"></i> Filtros</button>
               </div>
             </div>
             <br>
             <table class="table">
             <thead>
               <tr>
-                <td align="Center" scope="col">#</td>
-                <td scope="col">AÇÕES</td>
-                <td align="Center" scope="col">CÓDIGO</td>
-                <td scope="col">DESCRIÇÃO</td>
+                <td align="center" scope="col">#</td>
+                <td align="center" scope="col">AÇÕES</td>
+                <td align="center" scope="col">CÓDIGO</td>
+                <td width="200" scope="col">CPF DO CLIENTE</td>
+                <td scope="col">NOME DO CLIENTE</td>
+                <td scope="col">DATA DO CADASTRO</td>
+                <td scope="col">DATA DE INICIO</td>
+                <td scope="col">DATA DE TERMINO</td>
+                <td scope="col">VALOR DO CONTRATO</td>
                 <td align="Center" scope="col">STATUS</td>
               </tr>
             </thead>
@@ -78,13 +85,18 @@
                         foreach ($dados as $key => $row) {
                 ?>
                           <tr>
-                            <td align="Center" scope="row"><?=($key+1)?></td>
-                            <td>  
-                              <a class="navbar-brand text-Center" href="#" onclick="editarServico('<?=$row['id_servico']?>')">[Editar]</a>
+                            <td align="center" scope="row"><?=($key+1)?></td>
+                            <td align="center">  
+                              <a class="navbar-brand text-center" href="#" onclick="editarCliente('<?=$row['id_cliente']?>')">[Gerenciar]</a>
                             </td>
-                            <td align="Center"><?=str_pad($row['id_servico'],7,'0', STR_PAD_LEFT)?></td>
-                            <td><?=ucwords($row['descricao_servico'])?></td>
-                            <td align="Center"><?=ucwords($row['status_servico'])?></td>
+                            <td align="center"><?=str_pad($row['id_cliente'],7,'0', STR_PAD_LEFT)?></td>
+                            <td width="200"><?=$m->OutMascaraCPF($row['cpf_cliente'])?></td>
+                            <td><?=ucwords(strtolower($row['nome_cliente']))?></td>
+                            <td align="center"></td>
+                            <td align="center"></td>
+                            <td align="center"></td>
+                            <td align="center"></td>
+                            <td align="center"><?=ucwords($row['status_cliente'])?></td>
                           </tr>                          
                     <?php
                         }
@@ -92,7 +104,7 @@
                     else{
                 ?>
                     <tr>
-                        <td align="Center" colspan="5">Nenhum serviço encontrado.</td>
+                        <td align="Center" colspan="6">Nenhum cliente encontrado.</td>
                     </tr>
                 <?php                        
                     }

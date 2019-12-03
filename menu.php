@@ -31,8 +31,8 @@ include_once 'config/config.php';
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="contratos" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-sticky-note"></i> Contratos</a>
         <div class="dropdown-menu" aria-labelledby="contratos">
-          <a class="dropdown-item" href="#">Incluir novo contrato</a>
-          <a class="dropdown-item" href="#">Gerenciar contrato</a>
+          <a class="dropdown-item" href="viewIncluirContrato.php">Incluir novo contrato</a>
+          <a class="dropdown-item" href="viewGerenciarContrato.php">Gerenciar contrato</a>
         </div>
       </li>
 
