@@ -1,13 +1,13 @@
 <?php
     include_once("./verifica.php");
     include_once("./config/config.php");
-    include_once("$base/class/class.cliente.php");
+    include_once("$base/class/class.contrato.php");
     include_once("$base/class/class.mascara.php");
 
-    $cli = new Cliente();
+    $cont = new Contrato();
     $m = new Mascara();
 
-    $dados = $cli->buscaCliente();
+    $dados = $cont->buscaContrato();
 
 
 ?>
@@ -96,7 +96,7 @@
                             <td align="center"></td>
                             <td align="center"></td>
                             <td align="center"></td>
-                            <td align="center"><?=ucwords($row['status_cliente'])?></td>
+                            <td align="center"><?=ucwords($row['status_contrato'])?></td>
                           </tr>                          
                     <?php
                         }
@@ -104,7 +104,7 @@
                     else{
                 ?>
                     <tr>
-                        <td align="Center" colspan="6">Nenhum cliente encontrado.</td>
+                        <td align="Center" colspan="10">Nenhum contrato encontrado.</td>
                     </tr>
                 <?php                        
                     }

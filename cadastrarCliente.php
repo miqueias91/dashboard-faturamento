@@ -79,7 +79,7 @@
             });
 
             $("#representante_financeiro_cliente").autocomplete({
-                source: "./json_busca_representante_financeiro_cliente.php",
+                source: "./json_busca_cliente.php",
                 minLength: 1,
                 select: function( event, ui ) {
                     $('#id_representante_financeiro_cliente').val(ui.item.id);
@@ -132,8 +132,8 @@
             </div>
         </div>
 
-        <div class="row"> 
-            <div class="col-md-3">
+        <div class="row">
+           <div class="col-md-3">
               <div class="form-group text-left">
                 <label for="data_nascimento_cliente">Data de nascimento <small>(obrigatório)</small></label>
                 <input type="text" class="form-control data campo_obrigatorio" id="data_nascimento_cliente" name="data_nascimento_cliente" placeholder="Data de nascimento do cliente" required>

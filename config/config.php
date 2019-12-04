@@ -3,8 +3,7 @@
     header ('Content-type: text/html; charset=UTF-8');
 
 	$base 			="C:/xampp/htdocs/faturamento";
-	$base 			="/var/www/faturamento";
-	$base_http 		= "http://localhost/faturamento";
+	$base 			="/var/www/html/faturamento";
 	$base_http 		= "http://localhost/faturamento";
 
 	$PATH_BASE_HTTP = $base_http;

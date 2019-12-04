@@ -67,12 +67,12 @@
             <table class="table">
             <thead>
               <tr>
-                <td align="Center" scope="col">#</td>
+                <td align="center" scope="col">#</td>
                 <td scope="col">AÇÕES</td>
-                <td align="Center" scope="col">CÓDIGO</td>
+                <td align="center" scope="col">CÓDIGO</td>
                 <td scope="col">CPF DO CLIENTE</td>
                 <td scope="col">NOME DO CLIENTE</td>
-                <td align="Center" scope="col">STATUS</td>
+                <td align="center" scope="col">STATUS</td>
               </tr>
             </thead>
             <tbody>
@@ -81,14 +81,14 @@
                         foreach ($dados as $key => $row) {
                 ?>
                           <tr>
-                            <td align="Center" scope="row"><?=($key+1)?></td>
+                            <td align="center" scope="row"><?=($key+1)?></td>
                             <td>  
-                              <a class="navbar-brand text-Center" href="#" onclick="editarCliente('<?=$row['id_cliente']?>')">[Editar]</a>
+                              <a class="navbar-brand text-center" href="#" onclick="editarCliente('<?=$row['id_cliente']?>')">[Editar]</a>
                             </td>
-                            <td align="Center"><?=str_pad($row['id_cliente'],7,'0', STR_PAD_LEFT)?></td>
+                            <td align="center"><?=str_pad($row['id_cliente'],7,'0', STR_PAD_LEFT)?></td>
                             <td><?=$m->OutMascaraCPF($row['cpf_cliente'])?></td>
                             <td><?=ucwords(strtolower($row['nome_cliente']))?></td>
-                            <td align="Center"><?=ucwords($row['status_cliente'])?></td>
+                            <td align="center"><?=ucwords($row['status_cliente'])?></td>
                           </tr>                          
                     <?php
                         }
@@ -96,7 +96,7 @@
                     else{
                 ?>
                     <tr>
-                        <td align="Center" colspan="6">Nenhum cliente encontrado.</td>
+                        <td align="center" colspan="6">Nenhum cliente encontrado.</td>
                     </tr>
                 <?php                        
                     }

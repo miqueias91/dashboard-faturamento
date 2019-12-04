@@ -7,7 +7,7 @@
     $cli = new Cliente();
     $m = new Mascara();
 
-    $dados = $cli->buscaResponsavelFinanceiroCliente($term);
+    $dados = $cli->pesquisaCliente($term);
 
 	if($dados){
 		$i = 0;

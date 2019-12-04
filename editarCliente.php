@@ -96,7 +96,7 @@
             });
 
             $("#representante_financeiro_cliente").autocomplete({
-                source: "./json_busca_representante_financeiro_cliente.php",
+                source: "./json_busca_cliente.php",
                 minLength: 1,
                 select: function( event, ui ) {
                     $('#id_representante_financeiro_cliente').val(ui.item.id);

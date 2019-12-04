@@ -49,7 +49,7 @@
 	        }
 		}
 
-		public function buscaResponsavelFinanceiroCliente($pesquisa = null){ 
+		public function pesquisaCliente($pesquisa = null){ 
 			$filtro = "";
 			$filtro .= isset($pesquisa) ? " AND ( nome_cliente LIKE :pesquisa OR  cpf_cliente LIKE :pesquisa )" : "";			
 
