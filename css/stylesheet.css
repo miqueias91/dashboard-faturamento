@@ -90,3 +90,6 @@ h1, h2, a, table{
 main {
   margin-top: 50px;
 }
+input .valor {
+  text-align: right!important;
+}

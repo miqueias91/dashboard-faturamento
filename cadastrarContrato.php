@@ -1,9 +1,22 @@
 <?php
     include_once("./verifica.php");
     include_once("./config/config.php");
-    include_once("$base/class/class.cliente.php");
+    include_once("$base/class/class.contrato.php");
 
-    $cli = new Cliente();
+    $cont = new Contrato();
+
+  //Montando lista de Tipos descontos
+  $descontos = $cont->buscaDescontoTipo();
+  $options_descontos = '' ;
+  if($descontos){
+      foreach ($descontos as $row) {
+          $tipo = strtoupper($row['descricaotipodesconto']);
+          $cod_tipo = str_pad($row['id_descontotipo'],5,'0', STR_PAD_LEFT);
+
+          $options_descontos .= '<option value="$row[id_descontotipo]">'.$cod_tipo.' - '.strtoupper($tipo).'</option>\\n';
+      }
+  }
+  else $options_descontos.= '<option value="">Nenhum registro encontrado.</option>\\n' ;
 ?>
 
 <html lang="pt-br">
@@ -32,6 +45,7 @@
         <script src="<?=$PATH_JS;?>/popper.min.js"></script>
         <script src="<?=$PATH_JS;?>/bootstrap.min.js"></script>
         <script src="<?=$PATH_JS;?>/jquery.mask.js"></script>
+        <script src="<?=$PATH_JS;?>/maskMoney.js" language="javascript"></script>
         <script src="js/jquery-ui.js"></script>
 
 
@@ -43,8 +57,12 @@
       }
     </style>
     <script type="text/javascript">
-        $( document ).ready(function() {
+      var aux_desconto = 1;
+        $(document).on("input", ".numeral", function (e) {
+          this.value = this.value.replace(/[^0-9]/g, '');
+        });
 
+        $( document ).ready(function() {
           $( "#accordion" ).accordion();
 
           $('.data').mask('00/00/0000');
@@ -53,47 +71,158 @@
           $('.cpf').mask('000.000.000-00', {reverse: true});
           $('.cnpj').mask('00.000.000/0000-00', {reverse: true});
           $('.cep').mask('99.999-999');
+          $('.competencia').mask('99/9999');
 
+          $('.valor').maskMoney({
+              allowNegative: true,
+              thousands: '',
+              decimal: ',',
+              affixesStay: false
+          }); 
 
-
-          $('.cep').change(function(){
-              var cep = $(this).val();
-              cep = cep.replace('.','');
-              cep = cep.replace('-','');
-              
-              $.ajax({
-                  url: "https://viacep.com.br/ws/"+cep+"/json/",
-                  context: document.body
-              }).done(function(resposta) {
-                  $('#logradouro_cliente').val(resposta['logradouro']);
-                  $('#bairro_cliente').val(resposta['bairro']);
-                  $('#cidade_cliente').val(resposta['localidade']);
-                  $('#estado_cliente').val(resposta['uf']);
-              });
-     
+          $('.percentual').maskMoney({
+              thousands:'',
+              decimal:'.',
+              precision: 2,
+              affixesStay: false
           });
 
-          $('#salvarCliente').click(function(){
-              var retorno = true;
-              if ($('.campo_obrigatorio').val() == '') {
-                  retorno = false;
-                  alert('Existem campos obrigatórios não preenchidos!');
-              }
-              else{
-                  $("#form").submit();
-                  return true;
-              }
+          $('#novoDesconto').click(function(){
+              $('.competencia').unmask();
+              $('#todosdescontos').append(
+                '<div class="row" id="linhadesconto'+aux_desconto+'">'+
+                '  <div class="col-md-1">'+
+                '    <div class="form-group text-center">'+
+                '        <a class="form-control text-center" href="#" onclick="excluirDesconto('+aux_desconto+')"><i class="fas fa-trash-alt"></i></a>'+
+                '    </div>'+
+                '  </div>'+
+
+                '  <div class="col-md-2">'+
+                '    <div class="form-group text-left">'+
+                '      <select class="form-control campo_obrigatorio" id="iddescontotipo'+aux_desconto+'" name="iddescontotipo[]">'+
+                '        <option value="">Selecione</option>'+
+                '       <?=$options_descontos;?>'+
+                '      </select>'+
+                '    </div>'+
+                '  </div>'+
+
+                '  <div class="col-md-2">'+
+                '    <div class="form-group text-left">'+
+                '      <select class="form-control campo_obrigatorio" id="persiste'+aux_desconto+'" name="persiste[]">'+
+                '        <option value="">Selecione</option>'+
+                '      </select>'+
+                '    </div>'+
+                '  </div>'+
+
+                '  <div class="col-md-2">'+
+                '    <div class="form-group text-left">'+
+                '      <input type="text" name="percentualutilizado[]" class="form-control campo_obrigatorio percentual text-center" id="percentualutilizado'+aux_desconto+'" value="" placeholder="Percentual utilizado">'+
+                '    </div>'+
+                '  </div>'+
+
+                '  <div class="col-md-3">'+
+                '    <div class="form-group text-left">'+
+                '      <input type="text" name="valordesconto[]" class="form-control campo_obrigatorio valor" id="valordesconto'+aux_desconto+'" value="" placeholder="valor desconto" style="text-align: right;">'+
+                '    </div>'+
+                '  </div>'+
+
+                '  <div class="col-md-2">'+
+                '    <div class="form-group text-left">'+
+                '      <input type="text" name="compdesconto[]" class="form-control campo_obrigatorio competencia text-center" id="compdesconto'+aux_desconto+'" value="" placeholder="Comp. desconto">'+
+                '    </div>'+          
+                '  </div>'+
+                '</div>'
+              );
+
+              aux_desconto++ ;
+
+              $('.competencia').mask('99/9999');
+
+              $('.valor').maskMoney({
+                allowNegative: true,
+                thousands: '',
+                decimal: ',',
+                affixesStay: false
+              }); 
+
+              $('.percentual').maskMoney({
+                thousands:'',
+                decimal:'.',
+                precision: 2,
+                affixesStay: false
+              });    
+ 
+
+              // $('.percentual').change(function(){
+              //     if ($(this).val() == '') {
+              //         $(this).val('0.00');
+              //         $(this).attr('value','0.00');
+              //     } 
+                  
+              //     if(parseFloat($(this).val()) > 100){
+              //         alert("O percentual utilizado não pode ultrapassar 100%.");
+              //         $(this).val('');
+              //     }
+              //     else{
+              //         var valor_desconto = (parseFloat($("#valorparcela").val()) * parseFloat($(this).val())) / 100;
+              //         valor_desconto = valor_desconto.toFixed(2);
+              //         valor_desconto = valor_desconto.replace('.',',');
+
+              //         $("#valordesconto"+$(this).attr('linha')).val(valor_desconto);
+              //         $("#valordesconto"+$(this).attr('linha')).attr('value',valor_desconto);
+              //     }
+              // });
+
+              // $('.valordesconto').change(function(){
+              //     if ($(this).val() == '') {
+              //         $(this).val('0.00');
+              //         $(this).attr('value','0.00');
+              //     }         
+              // });
+
+              // $('.valordesconto').change(function(){
+              //     if(parseFloat($(this).val()) > parseFloat($("#valorparcela").val())){
+              //         alert("Atenção! O valor de desconto não pode ser superior ao valor do contrato.");
+              //         $(this).val('');
+              //     }
+              //     else{
+              //         var porc_desconto = (parseFloat($(this).val().replace(',','.')) * 100) / parseFloat($("#valorparcela").val().replace(',','.'));
+              //         porc_desconto = porc_desconto.toFixed(2);
+              //         porc_desconto = porc_desconto.replace(',','.');            
+              //         $("#percentual"+$(this).attr('linha')).val(porc_desconto);
+              //         $("#percentual"+$(this).attr('linha')).attr('value',porc_desconto);
+              //     }
+              // });
+
+              // $('.descontoclassificacao').change(function(){
+              //     buscaPersisteVencimento($(this).val(), $(this).attr('linha'));
+              // });
+          });
+
+          $('#salvarContrato').click(function(){
+            var retorno = true;
+            if ($('.campo_obrigatorio').val() == '') {
+              retorno = false;
+              alert('Existem campos obrigatórios não preenchidos!');
+            }
+            else{
+              $("#form").submit();
+              return true;
+            }
           });
 
           $("#cliente").autocomplete({
-              source: "./json_busca_cliente.php",
-              minLength: 1,
-              select: function( event, ui ) {
-                  $('#id_cliente').val(ui.item.id);
-                  $(this).val(ui.item.value);
-              }
+            source: "./json_busca_cliente.php",
+            minLength: 1,
+            select: function( event, ui ) {
+              $('#id_cliente').val(ui.item.id);
+              $(this).val(ui.item.value);
+            }
           });
         });
+        function excluirDesconto(i){
+          $('#linhadesconto'+i).remove();
+        }
     </script>
     <?=include_once("./menu.php");?>
     <main role="main" class="container">
@@ -112,15 +241,15 @@
 
                 <div class="col-md-4">
                   <div class="form-group text-left">
-                    <label for="data_inicio">Data de inicio <small>(obrigatório)</small></label>
-                    <input type="text" class="form-control data campo_obrigatorio" id="data_inicio" name="data_inicio" placeholder="Data de inicio do contrato" required>
+                    <label for="data_inicio">Data de inicio <br><small>(obrigatório)</small></label>
+                    <input type="text" class="form-control data campo_obrigatorio text-center" id="data_inicio" name="data_inicio" placeholder="Data de inicio do contrato" required>
                   </div>          
                 </div>
 
                 <div class="col-md-4">
                   <div class="form-group text-left">
-                    <label for="data_final">Data final <small>(obrigatório)</small></label>
-                    <input type="text" class="form-control data campo_obrigatorio" id="data_final" name="data_final" placeholder="Data final do contrato" required>
+                    <label for="data_final">Data final <br><small>(obrigatório)</small></label>
+                    <input type="text" class="form-control data campo_obrigatorio text-center" id="data_final" name="data_final" placeholder="Data final do contrato" required>
                   </div>          
                 </div>
               </div>
@@ -128,7 +257,7 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group text-left">
-                    <label for="id_cliente">Nome do cliente <small>(obrigatório)</small></label>
+                    <label for="id_cliente">Nome do cliente <br><small>(obrigatório)</small></label>
                     <input type="text" class="form-control campo_obrigatorio" id="cliente" name="" placeholder="Nome do cliente" required>
                     <input type="hidden" name="id_cliente" class="form-control" id="id_cliente" value="">
                   </div>          
@@ -137,7 +266,7 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group text-left">
-                    <label for="observacao">Observação <small>(obrigatório)</small></label>
+                    <label for="observacao">Observação <br><small>(obrigatório)</small></label>
                     <textarea id="observacao" name="observacao" class="form-control campo_obrigatorio"></textarea>
                   </div>          
                 </div>
@@ -149,7 +278,7 @@
               <div class="row">
                 <div class="col-md-4">
                   <div class="form-group text-left">
-                    <label for="tipo_contrato">Tipo de contrato <small>(obrigatório)</small></label>
+                    <label for="tipo_contrato">Tipo de contrato <br><small>(obrigatório)</small></label>
                     <select class="form-control campo_obrigatorio" id="tipo_contrato" name="tipo_contrato">
                       <option value="">Selecione</option>
                       <option value="fixo">Fixo</option>
@@ -159,7 +288,7 @@
                 </div>
                 <div class="col-md-4">
                   <div class="form-group text-left">
-                    <label for="tipo_pagamento">Tipo de pagamento <small>(obrigatório)</small></label>
+                    <label for="tipo_pagamento">Tipo de pagamento <br><small>(obrigatório)</small></label>
                     <select class="form-control campo_obrigatorio" id="tipo_pagamento" name="tipo_pagamento">
                       <option value="">Selecione</option>
                       <option value="boleto">Boleto</option>
@@ -171,7 +300,7 @@
 
                 <div class="col-md-4">
                   <div class="form-group text-left">
-                    <label for="status_contrato">Status do contrato <small>(obrigatório)</small></label>
+                    <label for="status_contrato">Status do contrato <br><small>(obrigatório)</small></label>
                     <select class="form-control campo_obrigatorio" id="status_contrato" name="status_contrato">
                       <option value="ativo">Ativo</option>
                       <option value="inativo">Inativo</option>
@@ -183,14 +312,14 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group text-left">
-                    <label for="numparcela">Nº de parcelas <small>(obrigatório)</small></label>
-                    <input type="text" name="numparcela" class="form-control campo_obrigatorio" id="numparcela" value="" placeholder="Nº de parcelas">
+                    <label for="numparcela">Nº de parcelas <br><small>(obrigatório)</small></label>
+                    <input type="text" name="numparcela" class="form-control campo_obrigatorio numeral text-center" id="numparcela" value="" placeholder="Nº de parcelas">
                   </div>          
                 </div>
                 <div class="col-md-6">
                   <div class="form-group text-left">
-                    <label for="valorparcela">Valor da parcela <small>(obrigatório)</small></label>
-                    <input type="text" name="valorparcela" class="form-control campo_obrigatorio" id="valorparcela" value="" placeholder="Valor da parcela">
+                    <label for="valorparcela">Valor da parcela <br><small>(obrigatório)</small></label>
+                    <input type="text" name="valorparcela" class="form-control campo_obrigatorio valor text-right" id="valorparcela" value="" placeholder="Valor da parcela">
                   </div>          
                 </div>
               </div>
@@ -198,20 +327,20 @@
               <div class="row">
                 <div class="col-md-4">
                   <div class="form-group text-left">
-                    <label for="diavencimento">Dia de vencimento do contrato <small>(obrigatório)</small></label>
-                    <input type="text" name="diavencimento" class="form-control campo_obrigatorio" id="diavencimento" value="" placeholder="Dia de vencimento do contrato">
+                    <label for="diavencimento">Dia de vencimento do contrato <br><small>(obrigatório)</small></label>
+                    <input type="text" name="diavencimento" class="form-control campo_obrigatorio numeral text-center" id="diavencimento" value="" placeholder="Dia de vencimento do contrato" maxlength="2">
                   </div>          
                 </div>
                 <div class="col-md-4">
                   <div class="form-group text-left">
-                    <label for="diavencimentodesconto">Dia de vencimento do desconto <small>(obrigatório)</small></label>
-                    <input type="text" name="diavencimentodesconto" class="form-control campo_obrigatorio" id="diavencimentodesconto" value="" placeholder="Dia de vencimento do desconto">
+                    <label for="diavencimentodesconto">Dia de vencimento do desconto <br><small>(obrigatório)</small></label>
+                    <input type="text" name="diavencimentodesconto" class="form-control campo_obrigatorio numeral text-center" id="diavencimentodesconto" value="" placeholder="Dia de vencimento do desconto" maxlength="2">
                   </div>          
                 </div>
                 <div class="col-md-4">
                   <div class="form-group text-left">
-                    <label for="compinicial">Competência inicial <small>(obrigatório)</small></label>
-                    <input type="text" name="compinicial" class="form-control campo_obrigatorio" id="compinicial" value="<?=date('m/Y')?>" placeholder="Competência inicial">
+                    <label for="compinicial">Competência inicial <br><small>(obrigatório)</small></label>
+                    <input type="text" name="compinicial" class="form-control campo_obrigatorio competencia text-center" id="compinicial" value="<?=date('m/Y')?>" placeholder="Competência inicial">
                   </div>          
                 </div>
               </div>
@@ -219,68 +348,75 @@
 
             <h3>DESCONTOS</h3>
             <div>
-              <div class="row">
+            <div id="todosdescontos">
+              <div class="row" id="linhadesconto0">
                 <div class="col-md-1">
                   <div class="form-group text-center">
                       <label>Ação</label>
-                      <a class="form-control text-center" href="#" onclick="excluirDesconto()">x</a>
+                      <!-- <a class="form-control text-center" href="#" onclick="excluirDesconto('0')">x</a> -->
                   </div>          
                 </div>
 
                 <div class="col-md-2">
                   <div class="form-group text-left">
-                    <label for="idclassificacaodesconto">Classificação <small>(obrigatório)</small></label>
-                    <select class="form-control campo_obrigatorio" id="idclassificacaodesconto" name="idclassificacaodesconto">
+                    <label for="iddescontotipo">Tipo de desconto <br><small>(obrigatório)</small></label>
+                    <select class="form-control campo_obrigatorio" linha="0" id="iddescontotipo0" name="iddescontotipo[]">
                       <option value="">Selecione</option>
+                      <?=$options_descontos?>
                     </select>
                   </div>          
                 </div>
 
                 <div class="col-md-2">
                   <div class="form-group text-left">
-                    <label for="persiste">Desc. persiste <small>(obrigatório)</small></label>
-                    <select class="form-control campo_obrigatorio" id="persiste" name="persiste">
-                      <option value="">Selecione</option>
-                    </select>
+                    <label for="persiste">Desc. persiste <br><small>(obrigatório)</small></label>               
+                    <input type="text" name="persiste[]" class="form-control campo_obrigatorio percentual text-center" linha="0" id="persiste0" value="" placeholder="Percentual utilizado" disabled>
+
                   </div>          
                 </div>
 
                 <div class="col-md-2">
                   <div class="form-group text-left">
-                    <label for="percentualutilizado">(%) utilizado <small>(obrigatório)</small></label>
-                    <input type="text" name="percentualutilizado" class="form-control campo_obrigatorio" id="percentualutilizado" value="" placeholder="Percentual utilizado">
+                    <label for="percentualutilizado">(%) utilizado <br><small>(obrigatório)</small></label>
+                    <input type="text" name="percentualutilizado[]" class="form-control campo_obrigatorio percentual text-center" linha="0" id="percentualutilizado0" value="" placeholder="Percentual utilizado">
                   </div>          
                 </div>
 
                 <div class="col-md-3">
                   <div class="form-group text-left">
-                    <label for="valordesconto">valor do desc. <small>(obrigatório)</small></label>
-                    <input type="text" name="valordesconto" class="form-control campo_obrigatorio" id="valordesconto" value="" placeholder="valor desconto">
+                    <label for="valordesconto">valor do desc. <br><small>(obrigatório)</small></label>
+                    <input type="text" name="valordesconto[]" class="form-control campo_obrigatorio valor" linha="0" id="valordesconto0" value="" placeholder="valor desconto" style="text-align: right;">
                   </div>          
                 </div>
 
                 <div class="col-md-2">
                   <div class="form-group text-left">
-                    <label for="compdesconto">Comp. desconto <small>(obrigatório)</small></label>
-                    <input type="text" name="compdesconto" class="form-control campo_obrigatorio" id="compdesconto" value="" placeholder="Comp. desconto">
+                    <label for="compdesconto">Comp. desconto <br><small>(obrigatório)</small></label>
+                    <input type="text" name="compdesconto[]" class="form-control campo_obrigatorio competencia text-center" linha="0" id="compdesconto0" value="" placeholder="Comp. desconto">
                   </div>          
                 </div>
               </div>
+         
+            </div>  
               <div class="row">
-                <div class="col-md6">
-                  <button class="btn btn-lg btn-primary btn-block" id="novoDesconto" type="button" href="#"><i class="fas fa-plus-circle"></i> Incluir desconto</button>
+                <div class="col-sm-12">
+                  <div class="text-center">
+                    <button class="btn btn-primary" id="novoDesconto" type="button" href="#"><i class="fas fa-plus-circle"></i> Incluir desconto</button>
+                  </div>
                 </div>
               </div>
-            </div>
-
-         
-   
-  
-            </div>
+            </div>  
           </div>
 
+          <div class="row" style="margin-top: 20px;">
+            <div class="col-sm-12">
+              <div class="text-center">
+                <button class="btn btn-primary" id="salvarContrato" type="button" href="#"><i class="fas fa-save"></i> Salvar contrato</button>
+              </div>
+            </div>
+          </div>
         </form>
-    </div>
+      </div>
     </main><!-- /.container -->
   </body>
 </html>
