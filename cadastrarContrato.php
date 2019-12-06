@@ -8,12 +8,13 @@
   //Montando lista de Tipos descontos
   $descontos = $cont->buscaDescontoTipo();
   $options_descontos = '' ;
+
   if($descontos){
       foreach ($descontos as $row) {
           $tipo = strtoupper($row['descricaotipodesconto']);
           $cod_tipo = str_pad($row['id_descontotipo'],5,'0', STR_PAD_LEFT);
 
-          $options_descontos .= '<option value="$row[id_descontotipo]">'.$cod_tipo.' - '.strtoupper($tipo).'</option>\\n';
+          $options_descontos .= '<option persisteapos="'.$row['persisteaposvencimento'].'" value="'.$row['id_descontotipo'].'">'.$cod_tipo.' - '.strtoupper($tipo).'</option>\\n';
       }
   }
   else $options_descontos.= '<option value="">Nenhum registro encontrado.</option>\\n' ;
@@ -88,115 +89,187 @@
           });
 
           $('#novoDesconto').click(function(){
-              $('.competencia').unmask();
-              $('#todosdescontos').append(
-                '<div class="row" id="linhadesconto'+aux_desconto+'">'+
-                '  <div class="col-md-1">'+
-                '    <div class="form-group text-center">'+
-                '        <a class="form-control text-center" href="#" onclick="excluirDesconto('+aux_desconto+')"><i class="fas fa-trash-alt"></i></a>'+
-                '    </div>'+
-                '  </div>'+
+            $('.competencia').unmask();
+            $('#todosdescontos').append(
+              '<div class="row" id="linhadesconto'+aux_desconto+'">'+
+              '  <div class="col-md-1">'+
+              '    <div class="form-group text-center">'+
+              '        <a class="form-control text-center" href="#" onclick="excluirDesconto('+aux_desconto+')"><i class="fas fa-trash-alt"></i></a>'+
+              '    </div>'+
+              '  </div>'+
 
-                '  <div class="col-md-2">'+
-                '    <div class="form-group text-left">'+
-                '      <select class="form-control campo_obrigatorio" id="iddescontotipo'+aux_desconto+'" name="iddescontotipo[]">'+
-                '        <option value="">Selecione</option>'+
-                '       <?=$options_descontos;?>'+
-                '      </select>'+
-                '    </div>'+
-                '  </div>'+
+              '  <div class="col-md-2">'+
+              '    <div class="form-group text-left">'+
+              '      <select class="form-control campo_obrigatorio descontotipo" id="iddescontotipo'+aux_desconto+'" name="iddescontotipo[]" linha="'+aux_desconto+'">'+
+              '        <option value="">Selecione</option>'+
+              '       <?=$options_descontos;?>'+
+              '      </select>'+
+              '    </div>'+
+              '  </div>'+
 
-                '  <div class="col-md-2">'+
-                '    <div class="form-group text-left">'+
-                '      <select class="form-control campo_obrigatorio" id="persiste'+aux_desconto+'" name="persiste[]">'+
-                '        <option value="">Selecione</option>'+
-                '      </select>'+
-                '    </div>'+
-                '  </div>'+
+              '  <div class="col-md-2">'+
+              '    <div class="form-group text-left">'+
+              '      <input type="text" name="percentualutilizado[]" class="form-control campo_obrigatorio persiste text-center" id="percentualutilizado'+aux_desconto+'" value="" placeholder="N/I" disabled  linha="'+aux_desconto+'">'+
+              '    </div>'+
+              '  </div>'+
 
-                '  <div class="col-md-2">'+
-                '    <div class="form-group text-left">'+
-                '      <input type="text" name="percentualutilizado[]" class="form-control campo_obrigatorio percentual text-center" id="percentualutilizado'+aux_desconto+'" value="" placeholder="Percentual utilizado">'+
-                '    </div>'+
-                '  </div>'+
+              '  <div class="col-md-2">'+
+              '    <div class="form-group text-left">'+                
+              '      <input type="text" name="percentualutilizado[]" class="form-control campo_obrigatorio percentual text-center linha'+aux_desconto+'" linha="'+aux_desconto+'" id="percentualutilizado'+aux_desconto+'" value="" placeholder="Percentual utilizado" disabled>'+
+              '    </div>'+
+              '  </div>'+
 
-                '  <div class="col-md-3">'+
-                '    <div class="form-group text-left">'+
-                '      <input type="text" name="valordesconto[]" class="form-control campo_obrigatorio valor" id="valordesconto'+aux_desconto+'" value="" placeholder="valor desconto" style="text-align: right;">'+
-                '    </div>'+
-                '  </div>'+
+              '  <div class="col-md-3">'+
+              '    <div class="form-group text-left">'+
+              '      <input type="text" name="valordesconto[]" class="form-control campo_obrigatorio valor linha'+aux_desconto+' valordesconto" id="valordesconto'+aux_desconto+'" value="" placeholder="valor desconto" style="text-align: right;" disabled  linha="'+aux_desconto+'">'+
+              '    </div>'+
+              '  </div>'+
 
-                '  <div class="col-md-2">'+
-                '    <div class="form-group text-left">'+
-                '      <input type="text" name="compdesconto[]" class="form-control campo_obrigatorio competencia text-center" id="compdesconto'+aux_desconto+'" value="" placeholder="Comp. desconto">'+
-                '    </div>'+          
-                '  </div>'+
-                '</div>'
-              );
+              '  <div class="col-md-2">'+
+              '    <div class="form-group text-left">'+
+              '      <input type="text" name="compdesconto[]" class="form-control campo_obrigatorio competencia text-center linha'+aux_desconto+'" id="compdesconto'+aux_desconto+'" value="" placeholder="Comp. desconto" disabled  linha="'+aux_desconto+'">'+
+              '    </div>'+          
+              '  </div>'+
+              '</div>'
+            );
 
-              aux_desconto++ ;
+            aux_desconto++ ;
 
-              $('.competencia').mask('99/9999');
+            $('.competencia').mask('99/9999');
 
-              $('.valor').maskMoney({
-                allowNegative: true,
-                thousands: '',
-                decimal: ',',
-                affixesStay: false
-              }); 
+            $('.valor').maskMoney({
+              allowNegative: true,
+              thousands: '',
+              decimal: ',',
+              affixesStay: false
+            }); 
 
-              $('.percentual').maskMoney({
-                thousands:'',
-                decimal:'.',
-                precision: 2,
-                affixesStay: false
-              });    
- 
+            $('.percentual').maskMoney({
+              thousands:'',
+              decimal:'.',
+              precision: 2,
+              affixesStay: false
+            }); 
 
-              // $('.percentual').change(function(){
-              //     if ($(this).val() == '') {
-              //         $(this).val('0.00');
-              //         $(this).attr('value','0.00');
-              //     } 
-                  
-              //     if(parseFloat($(this).val()) > 100){
-              //         alert("O percentual utilizado não pode ultrapassar 100%.");
-              //         $(this).val('');
-              //     }
-              //     else{
-              //         var valor_desconto = (parseFloat($("#valorparcela").val()) * parseFloat($(this).val())) / 100;
-              //         valor_desconto = valor_desconto.toFixed(2);
-              //         valor_desconto = valor_desconto.replace('.',',');
+            $('.descontotipo').change(function(){
+              var linha = $(this).attr('linha');
+              if ($(this).val() != '') {
+                var id = $(this).attr('id');
+                var persisteapos = $('#'+id+' option:selected').attr('persisteapos');
+                $('#persiste'+linha).val(persisteapos.toUpperCase());
+                $('.linha'+linha).removeAttr("disabled");
+              }
+              else{
+                $('.linha'+linha).attr("disabled","disabled");
+                $('#persiste'+linha).val('N/I');
+                $('#percentualutilizado'+linha).val('');
+                $('#valordesconto'+linha).val('');
+                $('#compdesconto'+linha).val('');
+              }
+            });
 
-              //         $("#valordesconto"+$(this).attr('linha')).val(valor_desconto);
-              //         $("#valordesconto"+$(this).attr('linha')).attr('value',valor_desconto);
-              //     }
-              // });
+            $('.percentual').change(function(){
+              if(parseInt($('#valorparcela').val()) == 0 || $('#valorparcela').val() == ''){
+                alert('Preencha o VALOR DA PARCELA nos DADOS ADICIONAIS antes de informar um percentual.');
+                $(this).val('');
+                $(this).focus();
+                return false;
+              }              
+              else if(parseFloat($(this).val()) > 100){
+                alert("O percentual utilizado não pode ultrapassar 100%.");
+                $(this).val('');
+                $(this).focus();
+                return false;
+              }
+              else{
+                var valor_desconto = (parseFloat($("#valorparcela").val()) * parseFloat($(this).val())) / 100;
+                valor_desconto = valor_desconto.toFixed(2);
+                valor_desconto = valor_desconto.replace('.',',');
 
-              // $('.valordesconto').change(function(){
-              //     if ($(this).val() == '') {
-              //         $(this).val('0.00');
-              //         $(this).attr('value','0.00');
-              //     }         
-              // });
+                $("#valordesconto"+$(this).attr('linha')).val(valor_desconto);
+                $("#valordesconto"+$(this).attr('linha')).attr('value',valor_desconto);
+              }
+            });
+            
+            $('.valordesconto').change(function(){
+              if(parseFloat($(this).val()) > parseFloat($("#valorparcela").val())){
+                alert("O valor de desconto não pode ser superior ao valor do contrato.");
+                $('#percentualutilizado'+$(this).attr('linha')).val('');
+                $(this).val('');
+                $(this).focus();
+                return false;
+              }
+              else{
+                var porc_desconto = (parseFloat($(this).val().replace(',','.')) * 100) / parseFloat($("#valorparcela").val().replace(',','.'));
+                porc_desconto = porc_desconto.toFixed(2);
+                porc_desconto = porc_desconto.replace(',','.');            
+                $("#percentualutilizado"+$(this).attr('linha')).val(porc_desconto);
+                $("#percentualutilizado"+$(this).attr('linha')).attr('value',porc_desconto);
+              }
+            });
 
-              // $('.valordesconto').change(function(){
-              //     if(parseFloat($(this).val()) > parseFloat($("#valorparcela").val())){
-              //         alert("Atenção! O valor de desconto não pode ser superior ao valor do contrato.");
-              //         $(this).val('');
-              //     }
-              //     else{
-              //         var porc_desconto = (parseFloat($(this).val().replace(',','.')) * 100) / parseFloat($("#valorparcela").val().replace(',','.'));
-              //         porc_desconto = porc_desconto.toFixed(2);
-              //         porc_desconto = porc_desconto.replace(',','.');            
-              //         $("#percentual"+$(this).attr('linha')).val(porc_desconto);
-              //         $("#percentual"+$(this).attr('linha')).attr('value',porc_desconto);
-              //     }
-              // });
 
-              // $('.descontoclassificacao').change(function(){
-              //     buscaPersisteVencimento($(this).val(), $(this).attr('linha'));
-              // });
+
+
+
+
+          });
+
+          $('.descontotipo').change(function(){
+            var linha = $(this).attr('linha');
+            if ($(this).val() != '') {
+              var id = $(this).attr('id');
+              var persisteapos = $('#'+id+' option:selected').attr('persisteapos');
+              $('#persiste'+linha).val(persisteapos.toUpperCase());
+              $('.linha'+linha).removeAttr("disabled");
+            }
+            else{
+              $('.linha'+linha).attr("disabled","disabled");
+              $('#persiste'+linha).val('N/I');
+              $('#percentualutilizado'+linha).val('');
+              $('#valordesconto'+linha).val('');
+              $('#compdesconto'+linha).val('');
+            }
+          }); 
+
+          $('.percentual').change(function(){
+            if(parseInt($('#valorparcela').val()) == 0 || $('#valorparcela').val() == ''){
+              alert('Preencha o VALOR DA PARCELA nos DADOS ADICIONAIS antes de informar um percentual.');
+              $(this).val('');
+              $(this).focus();
+              return false;
+            }              
+            else if(parseFloat($(this).val()) > 100){
+              alert("O percentual utilizado não pode ultrapassar 100%.");
+              $(this).val('');
+              $(this).focus();
+              return false;
+            }
+            else{
+              var valor_desconto = (parseFloat($("#valorparcela").val()) * parseFloat($(this).val())) / 100;
+              valor_desconto = valor_desconto.toFixed(2);
+              valor_desconto = valor_desconto.replace('.',',');
+
+              $("#valordesconto"+$(this).attr('linha')).val(valor_desconto);
+              $("#valordesconto"+$(this).attr('linha')).attr('value',valor_desconto);
+            }
+          });
+
+          $('.valordesconto').change(function(){
+            if(parseFloat($(this).val()) > parseFloat($("#valorparcela").val())){
+              alert("O valor de desconto não pode ser superior ao valor do contrato.");
+              $('#percentualutilizado'+$(this).attr('linha')).val('');
+              $(this).val('');
+              $(this).focus();
+              return false;
+            }
+            else{
+              var porc_desconto = (parseFloat($(this).val().replace(',','.')) * 100) / parseFloat($("#valorparcela").val().replace(',','.'));
+              porc_desconto = porc_desconto.toFixed(2);
+              porc_desconto = porc_desconto.replace(',','.');            
+              $("#percentualutilizado"+$(this).attr('linha')).val(porc_desconto);
+              $("#percentualutilizado"+$(this).attr('linha')).attr('value',porc_desconto);
+            }
           });
 
           $('#salvarContrato').click(function(){
@@ -273,7 +346,7 @@
               </div>
             </div>
 
-            <h3>DADOS ADCIONAIS</h3>
+            <h3>DADOS ADICIONAIS</h3>
             <div>
               <div class="row">
                 <div class="col-md-4">
@@ -360,7 +433,7 @@
                 <div class="col-md-2">
                   <div class="form-group text-left">
                     <label for="iddescontotipo">Tipo de desconto <br><small>(obrigatório)</small></label>
-                    <select class="form-control campo_obrigatorio" linha="0" id="iddescontotipo0" name="iddescontotipo[]">
+                    <select class="form-control campo_obrigatorio descontotipo" linha="0" id="iddescontotipo0" name="iddescontotipo[]">
                       <option value="">Selecione</option>
                       <?=$options_descontos?>
                     </select>
@@ -370,7 +443,7 @@
                 <div class="col-md-2">
                   <div class="form-group text-left">
                     <label for="persiste">Desc. persiste <br><small>(obrigatório)</small></label>               
-                    <input type="text" name="persiste[]" class="form-control campo_obrigatorio percentual text-center" linha="0" id="persiste0" value="" placeholder="Percentual utilizado" disabled>
+                    <input type="text" name="persiste[]" class="form-control campo_obrigatorio persiste text-center" linha="0" id="persiste0" value="" placeholder="N/I" disabled>
 
                   </div>          
                 </div>
@@ -378,21 +451,21 @@
                 <div class="col-md-2">
                   <div class="form-group text-left">
                     <label for="percentualutilizado">(%) utilizado <br><small>(obrigatório)</small></label>
-                    <input type="text" name="percentualutilizado[]" class="form-control campo_obrigatorio percentual text-center" linha="0" id="percentualutilizado0" value="" placeholder="Percentual utilizado">
+                    <input type="text" name="percentualutilizado[]" class="form-control campo_obrigatorio percentual text-center linha0" linha="0" id="percentualutilizado0" value="" placeholder="Percentual utilizado" disabled>
                   </div>          
                 </div>
 
                 <div class="col-md-3">
                   <div class="form-group text-left">
                     <label for="valordesconto">valor do desc. <br><small>(obrigatório)</small></label>
-                    <input type="text" name="valordesconto[]" class="form-control campo_obrigatorio valor" linha="0" id="valordesconto0" value="" placeholder="valor desconto" style="text-align: right;">
+                    <input type="text" name="valordesconto[]" class="form-control campo_obrigatorio valor linha0 valordesconto" linha="0" id="valordesconto0" value="" placeholder="valor desconto" style="text-align: right;" disabled>
                   </div>          
                 </div>
 
                 <div class="col-md-2">
                   <div class="form-group text-left">
                     <label for="compdesconto">Comp. desconto <br><small>(obrigatório)</small></label>
-                    <input type="text" name="compdesconto[]" class="form-control campo_obrigatorio competencia text-center" linha="0" id="compdesconto0" value="" placeholder="Comp. desconto">
+                    <input type="text" name="compdesconto[]" class="form-control campo_obrigatorio competencia text-center linha0" linha="0" id="compdesconto0" value="" placeholder="Comp. desconto" disabled>
                   </div>          
                 </div>
               </div>
