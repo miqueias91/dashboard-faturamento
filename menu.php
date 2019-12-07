@@ -12,7 +12,7 @@ include_once 'config/config.php';
   <div class="collapse navbar-collapse" id="navbarsExampleDefault">
     <ul class="navbar-nav mr-auto">
       
-      <li class="nav-item active">
+      <li class="nav-item">
         <a class="nav-link" href="viewInicio.php"><i class="fas fa-home"></i> Início <span class="sr-only">(current)</span></a>
       </li>
 

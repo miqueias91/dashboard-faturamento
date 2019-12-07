@@ -93,3 +93,9 @@ main {
 input .valor {
   text-align: right!important;
 }
+.ui-state-active{
+  border: 1px solid #343a40;
+  background: #343a40!important;
+  font-weight: normal;
+  color: #ffffff;
+}

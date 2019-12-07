@@ -40,15 +40,13 @@
   </head>
   <body>
     <script type="text/javascript">
-        function editarCliente(id_cliente) {
-            $("#form").attr('action','editarCliente.php?id_cliente='+id_cliente);
+        function cadastrarContrato(id_contrato) {
+            $("#form").attr('action','cadastrarContrato.php?id_contrato='+id_contrato);
             $("#form").submit();
             return true;
         }
         $( document ).ready(function() {
-            $('#novoCliente').click(function(){
-                $("#form").attr('action','cadastrarCliente.php');
-                $("#form").submit();
+            $('#filtros').click(function(){
                 return true;
             });
         });
@@ -57,26 +55,26 @@
     <main role="main" class="container">
 
       <div class="starter-template">
-        <form method=post name='form' id='form' enctype='multipart/form-data' action="cadastrarCliente.php">
+        <form method=post name='form' id='form' enctype='multipart/form-data' action="cadastrarContrato.php">
             <div class="row">
               <div class="col-md6">
-                <button class="btn btn-lg btn-primary btn-block" id="novoCliente" type="button" href="#"><i class="fas fa-plus-circle"></i> Filtros</button>
+                <button class="btn btn-lg btn-primary btn-block" id="filtros" type="button" href="#"><i class="fas fa-plus-circle"></i> Filtros</button>
               </div>
             </div>
             <br>
             <table class="table">
             <thead>
-              <tr>
+              <tr style="background: #212529;color: #fff;">
                 <td align="center" scope="col">#</td>
                 <td align="center" scope="col">AÇÕES</td>
                 <td align="center" scope="col">CÓDIGO</td>
-                <td width="200" scope="col">CPF DO CLIENTE</td>
-                <td scope="col">NOME DO CLIENTE</td>
-                <td scope="col">DATA DO CADASTRO</td>
-                <td scope="col">DATA DE INICIO</td>
-                <td scope="col">DATA DE TERMINO</td>
-                <td scope="col">VALOR DO CONTRATO</td>
-                <td align="Center" scope="col">STATUS</td>
+                <td width="150" scope="col">CPF DO CLIENTE</td>
+                <td width="200" align="left" scope="col">NOME DO CLIENTE</td>
+                <td align="center" scope="col">DATA DO CADASTRO</td>
+                <td align="center" scope="col">DATA DE INICIO</td>
+                <td align="center" scope="col">DATA DE TERMINO</td>
+                <td align="center" scope="col">VALOR DA PARCELA</td>
+                <td align="center" scope="col">STATUS</td>
               </tr>
             </thead>
             <tbody>
@@ -87,15 +85,15 @@
                           <tr>
                             <td align="center" scope="row"><?=($key+1)?></td>
                             <td align="center">  
-                              <a class="navbar-brand text-center" href="#" onclick="editarCliente('<?=$row['id_cliente']?>')">[Gerenciar]</a>
+                              <a class="navbar-brand text-center" href="#" onclick="cadastrarContrato('<?=$row['id_contrato']?>')">[Gerenciar]</a>
                             </td>
-                            <td align="center"><?=str_pad($row['id_cliente'],7,'0', STR_PAD_LEFT)?></td>
-                            <td width="200"><?=$m->OutMascaraCPF($row['cpf_cliente'])?></td>
-                            <td><?=ucwords(strtolower($row['nome_cliente']))?></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
+                            <td align="center"><?=str_pad($row['id_contrato'],7,'0', STR_PAD_LEFT)?></td>
+                            <td width="150"><?=$m->OutMascaraCPF($row['cpf_cliente'])?></td>
+                            <td width="200" align="left"><?=ucwords(strtolower($row['nome_cliente']))?></td>
+                            <td align="center"><?=date('d/m/Y', strtotime($row['datacadastro']))?></td>
+                            <td align="center"><?=date('d/m/Y', strtotime($row['datainicio']))?></td>
+                            <td align="center"><?=date('d/m/Y', strtotime($row['datafinal']))?></td>
+                            <td align="center">R$ <?=number_format($row['valorparcela'],2,",","")?></td>
                             <td align="center"><?=ucwords($row['status_contrato'])?></td>
                           </tr>                          
                     <?php
@@ -104,7 +102,7 @@
                     else{
                 ?>
                     <tr>
-                        <td align="Center" colspan="10">Nenhum contrato encontrado.</td>
+                        <td align="center" colspan="10">Nenhum contrato encontrado.</td>
                     </tr>
                 <?php                        
                     }
