@@ -94,26 +94,26 @@
 		 	try {
 	            $sql = "
 	            INSERT INTO `contrato`(
-					`id_contrato`,
-					`tipomovimento`,
-					`idcliente`,
-					`datacadastro`,
-					`datainicio`,
-					`datafinal`,
-					`compinicial`,
-					`numparcela`,
-					`valorparcela`,
-					`diavencimento`,
-					`observacao`,
-					`nomeanexo`,
-					`enderecoanexo`,
-					`status_contrato`,
-					`contrato_antigo`,
-					`tipo_contrato`,
-					`tipopagamento`,
-					`idconfigarquivobancario`,
-					`diavencimentodesconto`,
-					`idservico`
+						`id_contrato`,
+						`tipomovimento`,
+						`idcliente`,
+						`datacadastro`,
+						`datainicio`,
+						`datafinal`,
+						`compinicial`,
+						`numparcela`,
+						`valorparcela`,
+						`diavencimento`,
+						`observacao`,
+						`nomeanexo`,
+						`enderecoanexo`,
+						`status_contrato`,
+						`contrato_antigo`,
+						`tipo_contrato`,
+						`tipopagamento`,
+						`idconfigarquivobancario`,
+						`diavencimentodesconto`,
+						`idservico`
 					) 
 					VALUES (
 						:id_contrato,
@@ -167,60 +167,69 @@
 	         catch (Exception $e) {
 	             echo "<br>".$e->getMessage();
 	         }
-		 }
+		}
 
-		// public function excluirContrato($token_user, $id_contrato) {
-	 //        try {
-		//             $sql = "DELETE 
-		//             		FROM contrato 
-		//             		WHERE token_user = :token_user
-		//             		AND id_contrato = :id_contrato";
-		//             $pdo = Conexao::getInstance()->prepare($sql);
-		// 	        $pdo->bindValue(':token_user', $token_user, PDO::PARAM_INT);
-		// 	        $pdo->bindValue(':id_contrato', $id_contrato, PDO::PARAM_INT);
-		// 	        $pdo->execute();
-	 //        } 
-	 //        catch (Exception $e) {
-	 //            echo "<br>".$e->getMessage();
-	 //        }
-	 //    }
+		public function alteraContrato($dados){
+		 	try {
+	            $sql = "
+	            UPDATE contrato
 
-	 //    public function alterarContrato($id_contrato, $nome_contrato, $email_contrato, $grupo, $token_user, $telefone){
+	            SET
+					tipomovimento = :tipomovimento,
+					idcliente = :idcliente,
+					datainicio = :datainicio,
+					datafinal = :datafinal,
+					compinicial = :compinicial,
+					numparcela = :numparcela,
+					valorparcela = :valorparcela,
+					diavencimento = :diavencimento,
+					observacao = :observacao,
+					nomeanexo = :nomeanexo,
+					enderecoanexo = :enderecoanexo,
+					status_contrato = :status_contrato,
+					contrato_antigo = :contrato_antigo,
+					tipo_contrato = :tipo_contrato,
+					tipopagamento = :tipopagamento,
+					idconfigarquivobancario = :idconfigarquivobancario,
+					diavencimentodesconto = :diavencimentodesconto,
+					idservico = :idservico						
+						
+					WHERE id_contrato 	= :id_contrato";
 
-		// 	try {
-	 //            $sql = "UPDATE contrato 
-	 //            	SET
-	 //                nome_contrato		= :nome_contrato,
-	 //                email_contrato 		= :email_contrato,
-	 //                telefone 				= :telefone
-	 //                WHERE id_contrato 	= :id_contrato
-	 //                AND token_user 			= :token_user";
+	             	$pdo = Conexao::getInstance()->prepare($sql);
+	             	$pdo->bindValue(":id_contrato", $dados['id_contrato'], PDO::PARAM_INT);
+					$pdo->bindValue(":tipomovimento", $dados['tipomovimento'], PDO::PARAM_STR);
+					$pdo->bindValue(":idcliente", $dados['idcliente'], PDO::PARAM_INT);
+					$pdo->bindValue(":datainicio", $dados['datainicio'], PDO::PARAM_STR);
+					$pdo->bindValue(":datafinal", $dados['datafinal'], PDO::PARAM_STR);
+					$pdo->bindValue(":compinicial", $dados['compinicial'], PDO::PARAM_STR);
+					$pdo->bindValue(":numparcela", $dados['numparcela'], PDO::PARAM_INT);
+					$pdo->bindValue(":valorparcela", $dados['valorparcela'], PDO::PARAM_STR);
+					$pdo->bindValue(":diavencimento", $dados['diavencimento'], PDO::PARAM_INT);
+					$pdo->bindValue(":observacao", $dados['observacao'], PDO::PARAM_STR);
+					$pdo->bindValue(":nomeanexo", $dados['nomeanexo'], PDO::PARAM_STR);
+					$pdo->bindValue(":enderecoanexo", $dados['enderecoanexo'], PDO::PARAM_STR);
+					$pdo->bindValue(":status_contrato", $dados['status_contrato'], PDO::PARAM_STR);
+					$pdo->bindValue(":contrato_antigo", $dados['contrato_antigo'], PDO::PARAM_STR);
+					$pdo->bindValue(":tipo_contrato", $dados['tipo_contrato'], PDO::PARAM_STR);
+					$pdo->bindValue(":tipopagamento", $dados['tipopagamento'], PDO::PARAM_STR);
+					$pdo->bindValue(":idconfigarquivobancario", $dados['idconfigarquivobancario'], PDO::PARAM_INT);
+					$pdo->bindValue(":diavencimentodesconto", $dados['diavencimentodesconto'], PDO::PARAM_INT);
+					$pdo->bindValue(":idservico", $dados['idservico'], PDO::PARAM_INT);
+	             $pdo->execute();
 
-	 //            $pdo = Conexao::getInstance()->prepare($sql);
-	 //            $pdo->bindValue(':nome_contrato', $nome_contrato, PDO::PARAM_STR);
-	 //            $pdo->bindValue(':email_contrato', $email_contrato, PDO::PARAM_STR);
-	 //            $pdo->bindValue(':telefone', $telefone, PDO::PARAM_STR);
-	 //            $pdo->bindValue(':id_contrato', $id_contrato, PDO::PARAM_INT);
-	 //            $pdo->bindValue(':token_user', $token_user, PDO::PARAM_INT);
-	 //            $pdo->execute();
-
-	 //            $this->excluiDescontoContrato($id_contrato);
-
-	 //            foreach ($grupo as $row) {
-		// 		    $this->cadastraDescontoContrato($id_contrato, $row);
-		// 		}
-
-	 //        } 
-	 //        catch (Exception $e) {
-	 //            echo "<br>".$e->getMessage();
-	 //        }
-		// }
+	            $this->excluiDescontoContrato($dados['id_contrato']);
+	            return true;
+		 		
+	         } 
+	         catch (Exception $e) {
+	             echo "<br>".$e->getMessage();
+	         }
+		}
 
 		public function buscaDescontoTipo($id_descontotipo = null){			    
 			$filtro = "";
 			$filtro .= isset($id_descontotipo) ? " AND dt.id_descontotipo = :id_descontotipo" : "";
-			
-
 			try {
 	            $sql = "SELECT *
 

@@ -234,7 +234,7 @@
             }
           });
 
-          $('#salvarContrato').click(function(){
+          $('#salvarContrato, #salvarAlteracao').click(function(){
             if ($('.campo_obrigatorio').val() == '') {
               alert('Existem campos obrigatórios não preenchidos!');
               return false ;
