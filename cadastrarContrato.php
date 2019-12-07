@@ -9,6 +9,8 @@
     $ser = new Servico();
     $m = new Mascara();
 
+    $dataatual = date("d/m/Y");
+
     if ($id_contrato) {
       $dados = $cont->buscaContrato($id_contrato);
       $dadosDesconto = $cont->buscaDescontoContrato($id_contrato);
@@ -22,9 +24,40 @@
 
       $options_servico = '<option selected value="'.$dado['id_servico'].'">'.$dado['descricao_servico'].'</option>\\n';
 
+      if (date('d') > $dado['diavencimento']) {
+        $datavencimento = date("Y-m-d");
+        $auxdatavencimento = date('Y-m-d', strtotime("$datavencimento +1 month"));
+        $aux_datavencimento = explode("-", $auxdatavencimento);
+        $datavencimento = $dado['diavencimento']."/".$aux_datavencimento[1]."/".$aux_datavencimento[0];
+        $datadesconto = $dado['diavencimentodesconto']."/".$aux_datavencimento[1]."/".$aux_datavencimento[0];
+      }
+      else{
+        $datavencimento = $dado['diavencimento']."/".date("m/Y");
+        $datadesconto = $dado['diavencimentodesconto']."/".date("m/Y");
+      }
+
+
 
     }
 
+    function listaMeses($mesinicial, $anoinicial, $mesfinal, $anofinal){
+      //Inicializa array
+      $meses = array();
+      //Percorrendo os anos do periodo solicitado
+      for($ano = $anoinicial ; $ano <= $anofinal ; $ano++){
+          //Condicao de inicio e parada levando em consideracao o ano inicial e final
+          $mes_ = $ano == $anoinicial ?  $mesinicial : 1 ;
+          $_mes = $ano == $anofinal ? $mesfinal : 12 ;
+          //Percorrendo os meses dentro de cada ano solicitado
+          for($mes = $mes_ ; $mes <= $_mes ; $mes++){
+              //Coloca em um array o mes/ano percorrido
+              array_push($meses, str_pad($mes,2,"0",STR_PAD_LEFT)."/$ano");
+          }
+      }
+      //Retorna
+      return $meses ;
+    }
+    
     $servicos = $ser->buscaServico(null, null, 'ativo');
     $options_servicos = '' ;
     if($servicos){
@@ -258,6 +291,18 @@
               $('#id_cliente').val(ui.item.id);
               $(this).val(ui.item.value);
             }
+          });
+
+          $('#modalMovimento').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            //var recipient = button.data('whatever') // Extract info from data-* attributes
+
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+            modal.find('.modal-title').text('Gerar movimento ')
+            
+            //modal.find('.modal-body input').val(recipient)
           });
 
         });
@@ -523,6 +568,61 @@
       <div class="starter-template">
         <form action='salvarContrato.php' method='post' name='form' class="" id='form' enctype='multipart/form-data'>
           <input type="hidden" id="verificaLinhasDescontos" value="">
+
+          <div class="modal fade" id="modalMovimento" tabindex="-1" role="dialog" aria-labelledby="modalMovimentoLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalMovimentoLabel">Gerar movimento</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form>
+                    <div class="row">
+                      <div class="col-md-4">                        
+                        <div class="form-group  text-left">
+                          <label for="dataEmissao">Emissão</label>
+                          <input type="text" class="form-control data" id="dataEmissao" name="dataEmissao" value="<?=$dataatual?>" disabled>
+                        </div>
+                      </div>
+                      <div class="col-md-4">                        
+                        <div class="form-group  text-left">
+                          <label for="dataVencimento">Vencimento</label>
+                          <input type="text" class="form-control data" id="dataVencimento" name="dataVencimento" value="<?=$datavencimento?>">
+                        </div>
+                      </div>
+                      <div class="col-md-4">                        
+                        <div class="form-group  text-left">
+                          <label for="dataDesconto">Desconto</label>
+                          <input type="text" class="form-control data" id="dataDesconto" name="dataDesconto" value="<?=$datadesconto?>">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">                        
+                        <div class="form-group  text-left">
+                          <label for="compMovimento">Comp.</label>
+                          <input type="text" class="form-control competencia" id="compMovimento" name="compMovimento">
+                        </div>
+                      </div>                      
+                      <div class="col-md-6">                        
+                        <div class="form-group  text-left">
+                          <label for="valorMovimento">Valor do movimento</label>
+                          <input style="text-align: right;" type="text" class="form-control" id="valorMovimento" name="valorMovimento" value="<?= $dado[valorparcela] ? number_format($dado['valorparcela'],2,',','') : NULL?>">
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                  <button type="button" class="btn btn-primary">Gerar</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div id="accordion">
             <h3>DADOS PRINCIPAIS</h3>
@@ -824,7 +924,7 @@
                   <?php
                     if ($numMovimento < $dado['numparcela']) {
                   ?>
-                      <button class="btn btn-primary" id="gerarMovimento" type="button"><i class="fas fa-barcode"></i> Gerar movimento</button>
+                      <button class="btn btn-primary" id="gerarMovimento" type="button" data-toggle="modal" data-target="#modalMovimento" data-whatever=""><i class="fas fa-barcode"></i> Gerar movimento</button>
                   <?php
                     }
                   ?>
