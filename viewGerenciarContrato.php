@@ -84,8 +84,8 @@
                 ?>
                           <tr>
                             <td align="center" scope="row"><?=($key+1)?></td>
-                            <td align="center">  
-                              <a class="navbar-brand text-center" href="#" onclick="cadastrarContrato('<?=$row['id_contrato']?>')">[Gerenciar]</a>
+                            <td align="center">
+                                <span style="cursor: pointer;" align="center" title="Gerenciar contrato" class="text-center" onclick="cadastrarContrato('<?=$row['id_contrato']?>')"><i style="font-size: 12px" class="fas fa-pen-square"></i></span>                              
                             </td>
                             <td align="center"><?=str_pad($row['id_contrato'],7,'0', STR_PAD_LEFT)?></td>
                             <td width="150"><?=$m->OutMascaraCPF($row['cpf_cliente'])?></td>

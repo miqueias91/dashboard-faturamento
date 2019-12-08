@@ -257,9 +257,10 @@
 	        }
 		}
 
-		public function buscaDescontoContrato($idcontrato = null){			    
+		public function buscaDescontoContrato($idcontrato = null, $compdesconto = null){			    
 			$filtro = "";
 			$filtro .= isset($idcontrato) ? " AND cd.idcontrato = :idcontrato" : "";
+			$filtro .= isset($compdesconto) ? " AND cd.compdesconto = :compdesconto" : "";
 			
 
 			try {
@@ -280,6 +281,9 @@
 	            $pdo->bindValue(':idcontratodesconto', 0, PDO::PARAM_INT);
 	            if ($idcontrato) {
 		            $pdo->bindValue(':idcontrato', $idcontrato, PDO::PARAM_INT);
+	            }
+	            if ($compdesconto) {
+		            $pdo->bindValue(':compdesconto', $compdesconto, PDO::PARAM_STR);
 	            }
 	        
 	            $pdo->execute();

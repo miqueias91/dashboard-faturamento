@@ -44,4 +44,23 @@
 	        }
 		}
 
+		public function incrementaNumeroDocumentoAtual($id_configarquivobancario, $tam = 7){
+	        $sql="
+	            update
+	                configarquivobancario
+	            set
+	                numerodocumentoatual = lpad((numerodocumentoatual + 1), :tam, '0')
+	            where
+	                id_configarquivobancario = :id_configarquivobancario
+	            ";
+
+	        $pdo = Conexao::getInstance()->prepare($sql);
+			$pdo->bindValue(':tam', $tam, PDO::PARAM_INT);
+            if ($id_configarquivobancario) {
+	            $pdo->bindValue(':id_configarquivobancario', $id_configarquivobancario, PDO::PARAM_INT);
+            }          
+            $pdo->execute();
+            return true;
+	    }
+
 }

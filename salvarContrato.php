@@ -1,4 +1,5 @@
 <?php
+    include_once("./verifica.php");
     include_once("./config/config.php");
     include_once("$base/class/class.mascara.php");
     include_once("$base/class/class.contrato.php");
@@ -7,7 +8,7 @@
     $cont = new Contrato();
 
 
-    $dados['tipomovimento'] = 'despesa';
+    $dados['tipomovimento'] = 'receita';
     $dados['idcliente'] = $id_cliente;
     $dados['datacadastro'] = date('Y-m-d H:i:s');
     $dados['datainicio'] = $m->InMascaraData($data_inicio);

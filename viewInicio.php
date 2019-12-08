@@ -1,6 +1,6 @@
 <?php
-    include_once("./config/config.php");
     include_once("./verifica.php");
+    include_once("./config/config.php");
 
 ?>
 <!doctype html>

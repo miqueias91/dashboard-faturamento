@@ -1,4 +1,5 @@
 <?php
+    include_once("./verifica.php");
     include_once("./config/config.php");
 
 if( isset($verificaLinhasDescontos) && $verificaLinhasDescontos == 'sim'){

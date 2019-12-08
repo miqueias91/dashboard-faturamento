@@ -99,3 +99,6 @@ input .valor {
   font-weight: normal;
   color: #ffffff;
 }
+.data {
+  text-align: center!important;
+}

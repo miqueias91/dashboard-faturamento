@@ -9,37 +9,6 @@
     $ser = new Servico();
     $m = new Mascara();
 
-    $dataatual = date("d/m/Y");
-
-    if ($id_contrato) {
-      $dados = $cont->buscaContrato($id_contrato);
-      $dadosDesconto = $cont->buscaDescontoContrato($id_contrato);
-      $dadosMovimento = $cont->buscaMovimentoContrato($id_contrato);
-
-      $numMovimento = $dadosMovimento ? count($dadosMovimento) : 0;
-
-      $dado = $dados[0];
-
-      $dadosCliente = $dado['cpf_cliente'] ? $m->OutMascaraCPF($dado['cpf_cliente'])." | ".$dado['nome_cliente'] : NULL;
-
-      $options_servico = '<option selected value="'.$dado['id_servico'].'">'.$dado['descricao_servico'].'</option>\\n';
-
-      if (date('d') > $dado['diavencimento']) {
-        $datavencimento = date("Y-m-d");
-        $auxdatavencimento = date('Y-m-d', strtotime("$datavencimento +1 month"));
-        $aux_datavencimento = explode("-", $auxdatavencimento);
-        $datavencimento = $dado['diavencimento']."/".$aux_datavencimento[1]."/".$aux_datavencimento[0];
-        $datadesconto = $dado['diavencimentodesconto']."/".$aux_datavencimento[1]."/".$aux_datavencimento[0];
-      }
-      else{
-        $datavencimento = $dado['diavencimento']."/".date("m/Y");
-        $datadesconto = $dado['diavencimentodesconto']."/".date("m/Y");
-      }
-
-
-
-    }
-
     function listaMeses($mesinicial, $anoinicial, $mesfinal, $anofinal){
       //Inicializa array
       $meses = array();
@@ -57,6 +26,49 @@
       //Retorna
       return $meses ;
     }
+
+    $dataatual = date("d/m/Y");
+
+    if ($id_contrato) {
+      $dados = $cont->buscaContrato($id_contrato);
+      $dado = $dados[0];
+      $dadosDesconto = $cont->buscaDescontoContrato($id_contrato);
+      $dadosMovimento = $cont->buscaMovimentoContrato($id_contrato);
+
+      $numMovimento = $dadosMovimento ? count($dadosMovimento) : 0;
+
+
+      $dadosCliente = $dado['cpf_cliente'] ? $m->OutMascaraCPF($dado['cpf_cliente'])." | ".$dado['nome_cliente'] : NULL;
+
+      $options_servico = '<option selected value="'.$dado['id_servico'].'">'.$dado['descricao_servico'].'</option>\\n';
+
+      if (date('d') > $dado['diavencimento']) {
+        $datavencimento = date("Y-m-d");
+        $auxdatavencimento = date('Y-m-d', strtotime("$datavencimento +1 month"));
+        $aux_datavencimento = explode("-", $auxdatavencimento);
+        $datavencimento = $dado['diavencimento']."/".$aux_datavencimento[1]."/".$aux_datavencimento[0];
+        $datadesconto = $dado['diavencimentodesconto']."/".$aux_datavencimento[1]."/".$aux_datavencimento[0];
+      }
+      else{
+        $datavencimento = $dado['diavencimento']."/".date("m/Y");
+        $datadesconto = $dado['diavencimentodesconto']."/".date("m/Y");
+      }
+
+      $tmp = explode("/", $dado['compinicial']); // formato mm/YYYY
+      $ano = $tmp[1];
+      $mes = $tmp[0];
+      $dia = '01';
+      // Concatenando ano-mes-dia para pegar o inicio da primeira parcela
+      $tmp = "$ano-$mes-$dia";
+      // Transformando a data inicial da primeira parcela
+      $time = strtotime($tmp);
+      $num_parcelas = $dado['numparcela']-1;
+      // Incrementando a quantidade parcelas(meses) para obter a data final de acordo com o numero de parcelas cadastrado pelo usuario date("Y-m-d", strtotime("+1 month", $time));
+      $final = date("Y-m-d", strtotime("+$num_parcelas month", $time));
+      // Montando o array com numero de meses obtido entre as datas inicial e final
+      $meses_competencia = listaMeses($mes, $ano, substr($final,5,2), substr($final,0,4));
+    }
+
     
     $servicos = $ser->buscaServico(null, null, 'ativo');
     $options_servicos = '' ;
@@ -269,7 +281,7 @@
 
           $('#salvarContrato, #salvarAlteracao').click(function(){
             if ($('.campo_obrigatorio').val() == '') {
-              alert('Existem campos obrigatórios não preenchidos!');
+              alert('Existem campos obrigatórios não preenchidos.');
               return false ;
             }
             else if(!verificaDesconto()){
@@ -279,6 +291,40 @@
             else{
               $('.bloqueado').removeAttr('disabled');
 
+              $("#form").submit();
+              return true;
+            }
+          });
+
+          $('#gerar').click(function(){
+
+            if ($('#dataDesconto').val() != '' && $('#dataVencimento').val() != '') {
+              var tmp_dataVencimento = $('#dataVencimento').val().split("/");
+              var dataVencimento = tmp_dataVencimento[2]+''+tmp_dataVencimento[1]+''+tmp_dataVencimento[0];
+              
+              var tmp_dataDesconto = $('#dataDesconto').val().split("/");
+              var dataDesconto = tmp_dataDesconto[2]+''+tmp_dataDesconto[1]+''+tmp_dataDesconto[0];
+            }
+
+            if (parseInt(dataDesconto) > parseInt(dataVencimento)) {
+              alert("O vencimento do desconto não pode ser superior ao vencimento do movimento.");
+              return false ;
+            }              
+            else if ($('.campo_obrigatorio').val() == '') {
+              alert('Existem campos obrigatórios não preenchidos.');
+              return false ;
+            }
+            else if(!verificaDesconto()){
+              alert('Verifique os dados dos descontos.');
+              return false ;
+            }
+            else if ($('#dataVencimento').val() == '' || $('#dataDesconto').val() == '' || $('#compMovimento').val() == '' || $('#valorMovimento').val() == ''){
+              alert('Verifique os dados para geração do movimento.');
+              return false ;
+            }
+            else{
+              $('.bloqueado').removeAttr('disabled');
+              $('#form').attr('action', "./salvarContratoMovimento.php?idcontrato=<?=$id_contrato?>");
               $("#form").submit();
               return true;
             }
@@ -294,15 +340,9 @@
           });
 
           $('#modalMovimento').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget) // Button that triggered the modal
-            //var recipient = button.data('whatever') // Extract info from data-* attributes
-
-            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-            var modal = $(this)
-            modal.find('.modal-title').text('Gerar movimento ')
-            
-            //modal.find('.modal-body input').val(recipient)
+            var button = $(event.relatedTarget);            
+            var modal = $(this);
+            modal.find('.modal-title').text('Gerar movimento ');
           });
 
         });
@@ -584,19 +624,19 @@
                       <div class="col-md-4">                        
                         <div class="form-group  text-left">
                           <label for="dataEmissao">Emissão</label>
-                          <input type="text" class="form-control data" id="dataEmissao" name="dataEmissao" value="<?=$dataatual?>" disabled>
+                          <input type="text" class="form-control data" id="dataEmissao" value="<?=$dataatual?>" disabled>
                         </div>
                       </div>
                       <div class="col-md-4">                        
                         <div class="form-group  text-left">
                           <label for="dataVencimento">Vencimento</label>
-                          <input type="text" class="form-control data" id="dataVencimento" name="dataVencimento" value="<?=$datavencimento?>">
+                          <input style="text-align: center;" type="text" class="form-control data" id="dataVencimento" name="datavencimento_movimento" value="<?=$datavencimento?>">
                         </div>
                       </div>
                       <div class="col-md-4">                        
                         <div class="form-group  text-left">
                           <label for="dataDesconto">Desconto</label>
-                          <input type="text" class="form-control data" id="dataDesconto" name="dataDesconto" value="<?=$datadesconto?>">
+                          <input style="text-align: center;" type="text" class="form-control data" id="dataDesconto" name="datavencimento_desconto" value="<?=$datadesconto?>">
                         </div>
                       </div>
                     </div>
@@ -604,13 +644,22 @@
                       <div class="col-md-6">                        
                         <div class="form-group  text-left">
                           <label for="compMovimento">Comp.</label>
-                          <input type="text" class="form-control competencia" id="compMovimento" name="compMovimento">
+                          <input style="text-align: center;" type="text" class="form-control competencia" id="compMovimento" name="competencia" value="<?=$meses_competencia[$numMovimento]?>">
                         </div>
                       </div>                      
                       <div class="col-md-6">                        
                         <div class="form-group  text-left">
                           <label for="valorMovimento">Valor do movimento</label>
-                          <input style="text-align: right;" type="text" class="form-control" id="valorMovimento" name="valorMovimento" value="<?= $dado[valorparcela] ? number_format($dado['valorparcela'],2,',','') : NULL?>">
+                          <?php if ($dado['tipo_contrato'] == 'fixo'){
+                          ?>
+                            <input style="text-align: right;" type="text" class="form-control" id="valorMovimento" value="<?= $dado[valorparcela] ? number_format($dado['valorparcela'],2,',','') : NULL?>" disabled>
+                            
+                          <?php }else{
+                          ?>
+                            <input style="text-align: right;" type="text" class="form-control" id="valorMovimento" name="valormovimento" value="<?= $dado[valorparcela] ? number_format($dado['valorparcela'],2,',','') : NULL?>">
+                          <?php                            
+                          }
+                          ?>
                         </div>
                       </div>
                     </div>
@@ -618,7 +667,7 @@
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                  <button type="button" class="btn btn-primary">Gerar</button>
+                  <button type="button" class="btn btn-primary" id="gerar">Gerar</button>
                 </div>
               </div>
             </div>
