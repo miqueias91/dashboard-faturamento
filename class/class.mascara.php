@@ -79,6 +79,15 @@
 			return $maskared;
 		}
 
+		public function OutMascaraCEP($data){
+			$maskared = '';
+			$maskared1 = substr($data,0,2).".";
+			$maskared2 = substr($data,2,3)."-";
+			$maskared3 = substr($data,5,3);
+			$maskared = $maskared1.$maskared2.$maskared3;
+			return $maskared;
+		}
+
 
 
 	}

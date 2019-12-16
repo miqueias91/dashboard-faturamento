@@ -143,6 +143,25 @@
         $( document ).ready(function() {
           $( "#accordion" ).accordion();
 
+          $( "#divboletos" ).dialog({
+              autoOpen: false,
+              resizable: false,
+              draggable: false,
+              height: 500,
+              width:800,
+              modal:true,
+
+              buttons: {
+                  "Fechar": function(){
+                      $(this).dialog('close');
+                  },
+                  "Imprimir": function(){
+                      // window.print();
+                      $("#iframeboleto").get(0).contentWindow.print();
+                  }                     
+              }
+          });   
+
           //MASCARAS DOS CAMPOS
           $('.data').mask('00/00/0000');
           $('.cep').mask('00000-000');
@@ -459,8 +478,8 @@
             $('#todosdescontos').append(
               '<div class="row" id="linhadesconto'+aux_desconto+'">'+
               '  <div class="col-md-1">'+
-              '    <div class="form-group text-center">'+
-              '        <a class="form-control text-center" href="#" onclick="excluirDesconto('+aux_desconto+')"><i class="fas fa-trash-alt"></i></a>'+
+              '    <div class="btn-group btn-group-sm text-center">'+
+              '        <a title="Excluir" class="form-control-sm text-center" href="#" onclick="excluirDesconto('+aux_desconto+')"><i class="fas fa-trash-alt"></i></a>'+
               '    </div>'+
               '  </div>'+
 
@@ -589,7 +608,10 @@
             });
         }
 
-
+        function downloadMovimento(idparcela) {
+            $('#iframeboleto').attr('src', 'imprimirBoleto.php?idboleto='+idparcela);
+            $('#divboletos').dialog('open');
+        }
 
 
 
@@ -608,7 +630,10 @@
       <div class="starter-template">
         <form action='salvarContrato.php' method='post' name='form' class="" id='form' enctype='multipart/form-data'>
           <input type="hidden" id="verificaLinhasDescontos" value="">
-
+          
+          <div id='divboletos' style="display:none;width:800px;height:500px" class="dialogo" title='Impressão de boletos'  align='center'>
+            <iframe src="" name="iframeboleto" id='iframeboleto' style="background: white;" width='100%' height='100%' frameborder='0'></iframe>
+          </div> 
           <div class="modal fade" id="modalMovimento" tabindex="-1" role="dialog" aria-labelledby="modalMovimentoLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
@@ -863,38 +888,38 @@
             <h3>LANÇAMENTOS</h3>
             <div>
               <div class="row">
-                <div class="col-md-1">
+                <div class="col-md-2">
                   <div class="form-group text-center">
                       <label>Ação</label>
                   </div>          
                 </div>
 
                 <div class="col-md-2">
-                  <div class="form-group text-left">
+                  <div class="form-group text-center">
                     <label for="">Nº Movimento</label>                    
                   </div>          
                 </div>
 
                 <div class="col-md-2">
-                  <div class="form-group text-left">
-                    <label for="">Documento></label>
-                  </div>          
-                </div>
-
-                <div class="col-md-2">
-                  <div class="form-group text-left">
-                    <label for="">Histórico</label>
+                  <div class="form-group text-center">
+                    <label for="">Documento</label>
                   </div>          
                 </div>
 
                 <div class="col-md-3">
                   <div class="form-group text-left">
-                    <label for="">valor</label>
+                    <label for="">Histórico</label>
                   </div>          
                 </div>
 
                 <div class="col-md-2">
-                  <div class="form-group text-left">
+                  <div class="form-group text-right">
+                    <label for="">valor</label>
+                  </div>          
+                </div>
+
+                <div class="col-md-1">
+                  <div class="form-group text-center">
                     <label for="">Comp</label>
                   </div>          
                 </div>
@@ -904,42 +929,43 @@
                 foreach ($dadosMovimento as $key => $value) {
               ?> 
               <div class="row">
-                <div class="col-md-1">
+                <div class="col-md-2">
+                  <div class="btn-group btn-group-sm text-center">
+                        <a title="Excluir" class="form-control-sm text-center" href="#" onclick="excluirMovimento('<?=$value[idmovimento]?>')"><i class="fas fa-trash-alt"></i></a>
+
+                        <a title="Abrir" class="form-control-sm text-center" href="#" onclick="abrirMovimento('<?=$value[idmovimento]?>')"><i class="fas fa-folder-open"></i></a>
+
+                        <a title="Download" class="form-control-sm text-center" href="#" onclick="downloadMovimento('<?=$value[id_movimento_parcela]?>')"><i class="fas fa-download"></i></a>
+                  </div>          
+                </div>
+
+                <div class="col-md-2">
                   <div class="form-group text-center">
-                      <label>Ação</label>
-                        <a class="form-control text-center" href="#" onclick="excluirMovimento(0)"><i class="fas fa-trash-alt"></i></a>
-                        <a class="form-control text-center" href="#" onclick="abrirMovimento(0)"><i class="fas fa-folder-open"></i></a>
-                        <a class="form-control text-center" href="#" onclick="baixarMovimento(0)"><i class="fas fa-download"></i></a>
+                    <?=str_pad($value['idmovimento'],7,'0', STR_PAD_LEFT)?>
                   </div>          
                 </div>
 
                 <div class="col-md-2">
-                  <div class="form-group text-left">
-                    <label for="">Nº Movimento</label>                    
-                  </div>          
-                </div>
-
-                <div class="col-md-2">
-                  <div class="form-group text-left">
-                    <label for="">Documento></label>
-                  </div>          
-                </div>
-
-                <div class="col-md-2">
-                  <div class="form-group text-left">
-                    <label for="">Histórico</label>
+                  <div class="form-group text-center">
+                    <?=$value['documento']?>
                   </div>          
                 </div>
 
                 <div class="col-md-3">
                   <div class="form-group text-left">
-                    <label for="">valor</label>
+                    <?=$value['descricaohistorico']?>
                   </div>          
                 </div>
 
                 <div class="col-md-2">
-                  <div class="form-group text-left">
-                    <label for="">Comp</label>
+                  <div class="form-group text-right">
+                    <?=$value['valortotal']?>
+                  </div>          
+                </div>
+
+                <div class="col-md-1">
+                  <div class="form-group text-center">
+                    <?=$value['comp']?>
                   </div>          
                 </div>
               </div> 

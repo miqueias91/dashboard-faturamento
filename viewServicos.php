@@ -65,11 +65,11 @@
             <table class="table">
             <thead>
               <tr>
-                <td align="Center" scope="col">#</td>
-                <td scope="col">AÇÕES</td>
-                <td align="Center" scope="col">CÓDIGO</td>
+                <td align="center" scope="col">#</td>
+                <td align="center" scope="col">AÇÕES</td>
+                <td align="center" scope="col">CÓDIGO</td>
                 <td scope="col">DESCRIÇÃO</td>
-                <td align="Center" scope="col">STATUS</td>
+                <td align="center" scope="col">STATUS</td>
               </tr>
             </thead>
             <tbody>
@@ -78,13 +78,13 @@
                         foreach ($dados as $key => $row) {
                 ?>
                           <tr>
-                            <td align="Center" scope="row"><?=($key+1)?></td>
-                            <td>  
-                              <a class="navbar-brand text-Center" href="#" onclick="editarServico('<?=$row['id_servico']?>')">[Editar]</a>
+                            <td align="center" scope="row"><?=($key+1)?></td>
+                            <td align="center">  
+                              <span style="cursor: pointer;" align="center" title="Gerenciar serviço" class="text-center" onclick="editarServico('<?=$row['id_servico']?>')"><i style="font-size: 12px" class="fas fa-pen-square"></i></span>
                             </td>
-                            <td align="Center"><?=str_pad($row['id_servico'],7,'0', STR_PAD_LEFT)?></td>
+                            <td align="center"><?=str_pad($row['id_servico'],7,'0', STR_PAD_LEFT)?></td>
                             <td><?=ucwords($row['descricao_servico'])?></td>
-                            <td align="Center"><?=ucwords($row['status_servico'])?></td>
+                            <td align="center"><?=ucwords($row['status_servico'])?></td>
                           </tr>                          
                     <?php
                         }
@@ -92,7 +92,7 @@
                     else{
                 ?>
                     <tr>
-                        <td align="Center" colspan="5">Nenhum serviço encontrado.</td>
+                        <td align="center" colspan="5">Nenhum serviço encontrado.</td>
                     </tr>
                 <?php                        
                     }

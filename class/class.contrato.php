@@ -304,9 +304,10 @@
 	                FROM contrato_movimento cm
 	                INNER JOIN contrato co ON co.id_contrato = cm.idcontrato
 	                INNER JOIN movimento mo ON mo.id_movimento = cm.idmovimento
+	                LEFT JOIN movimento_parcela mp ON mo.id_movimento = mp.idmovimento
 	                WHERE cm.id_contrato_movimento > :idcontratomovimento
 	                $filtro
-	                GROUP BY cm.id_contrato_movimento
+	                -- GROUP BY cm.id_contrato_movimento
 	            ";
 
 
@@ -324,5 +325,34 @@
 	            echo "<br>".$e->getMessage();
 	        }
 		}
+
+		public function cadastraMovimentoContrato($idcontrato, $dados){
+
+		 	try {
+	            $sql = "
+					INSERT INTO `contrato_movimento`(
+					`id_contrato_movimento`,
+					`idcontrato`,
+					`idmovimento`,
+					`formamovimento`
+					) 
+					VALUES (
+					:id_contrato_movimento,
+					:idcontrato,
+					:idmovimento,
+					:formamovimento
+					)";
+
+	             $pdo = Conexao::getInstance()->prepare($sql);
+	             $pdo->bindValue(":id_contrato_movimento", NULL, PDO::PARAM_INT);
+	             $pdo->bindValue(":idcontrato", $idcontrato, PDO::PARAM_INT);
+	             $pdo->bindValue(":idmovimento", $dados['idmovimento'], PDO::PARAM_INT);
+	             $pdo->bindValue(":formamovimento", $dados['formamovimento'], PDO::PARAM_STR);
+	             $pdo->execute();
+	         } 
+	         catch (Exception $e) {
+	             echo "<br>".$e->getMessage();
+	         }
+		 }
 
 }

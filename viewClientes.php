@@ -68,7 +68,7 @@
             <thead>
               <tr>
                 <td align="center" scope="col">#</td>
-                <td scope="col">AÇÕES</td>
+                <td align="center" scope="col">AÇÕES</td>
                 <td align="center" scope="col">CÓDIGO</td>
                 <td scope="col">CPF DO CLIENTE</td>
                 <td scope="col">NOME DO CLIENTE</td>
@@ -82,8 +82,8 @@
                 ?>
                           <tr>
                             <td align="center" scope="row"><?=($key+1)?></td>
-                            <td>  
-                              <a class="navbar-brand text-center" href="#" onclick="editarCliente('<?=$row['id_cliente']?>')">[Editar]</a>
+                            <td align="center">  
+                              <span style="cursor: pointer;" align="center" title="Gerenciar cliente" class="text-center" onclick="editarCliente('<?=$row['id_cliente']?>')"><i style="font-size: 12px" class="fas fa-pen-square"></i></span>
                             </td>
                             <td align="center"><?=str_pad($row['id_cliente'],7,'0', STR_PAD_LEFT)?></td>
                             <td><?=$m->OutMascaraCPF($row['cpf_cliente'])?></td>

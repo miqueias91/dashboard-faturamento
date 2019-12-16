@@ -9,8 +9,6 @@ include_once("$base/class/class.faturamentoBoleto.php");
 include_once("$base/class/class.faturamentoBoletoSicoob.php");
 include_once("$base/class/class.configuracaoArquivo.php");
 
-echo "<pre>";
-
 function listaMeses($mesinicial, $anoinicial, $mesfinal, $anofinal){
     //Inicializa array
     $meses = array();
@@ -32,9 +30,6 @@ function listaMeses($mesinicial, $anoinicial, $mesfinal, $anofinal){
 $m = new Mascara();
 $contrato = new Contrato();
 $fin = new Financeiro();
-
-
-
 
 $movimentos_gerados_cont = 0 ;
 $movimentos_gerados = $contrato->buscaMovimentoContrato($idcontrato);
@@ -178,6 +173,8 @@ $dados['especie']= NULL;
 $dados['idcliente']= $dadoscontrato['idcliente'];
 $dados['historico']= "MOVIMENTO $num_parcelas_historico/{$dadoscontrato['numparcela']} REF. AO CONTRATO N ".str_pad($idcontrato,7,'0', STR_PAD_LEFT);
 $dados['tokenuser']= $_SESSION['token_user'];
+$dados['comp']= $comp_;
+$dados['formamovimento']= $formamovimento ? $formamovimento : 'principal';
 
     
 
@@ -191,11 +188,12 @@ $dados['vencimento'][0] = $datavencimento_movimento;
 /* Dados da forma de pagamento */
 $dados['valorformapagamento'][0][0] = $dados['valorparcela'][0];
 $dados['documentoformapagamento'][0][0] = "";
-$dados['complementoformapagamento'][0][0] = "";
+$dados['complementoformapagamento'][0][0] = "0,00";
 $dados['despesa'][0][0] = "0,00";
 $dados['desconto'][0][0] = $valor_total_descontos > 0 ? number_format($valor_total_descontos, 2, ",", "") : "0,00";
 $dados['deducoes'][0][0] = "0,00";
-$dados['juros'][1][0] = "0,00";
+$dados['juros'][0][0] = "0,00";
+$dados['perda'][0][0] = "0,00";
 $dados['multa'][0][0] = "0,00";
 $dados['pagamento'][0][0] = "";
 $dados['valorpago'][0][0] = "0,00";
@@ -204,7 +202,7 @@ $dados['tipopgto'][0][0]= $dadoscontrato['tipopagamento'];
 $dados['indexador_desconto'] = 100;
 
 $dados['nosso_numero'] = NULL;
-$dados['idconfigboleto']= NULL; 
+$dados['idconfigarquivobancario']= NULL; 
 $dados['numerodocumento'] = NULL;
 
 $boleto = isset($dadoscontrato['tipopagamento']) && $dadoscontrato['tipopagamento'] == 'boleto' ? true : false;
@@ -216,35 +214,25 @@ if($boleto){
     $bol = new FaturamentoBoleto();
     $dadosboleto = $bol->calculaNossoNumero( $dadoscontrato['idconfigarquivobancario'] );
     $dados['nosso_numero'] = $dadosboleto['nosso_numero'];
-    $dados['idconfigboleto']= $dadoscontrato['idconfigarquivobancario'];
+    $dados['idconfigarquivobancario']= $dadoscontrato['idconfigarquivobancario'];
     $dados['numerodocumento'] = $dadosboleto['numero_documento'];
     //Incremento mais 1 no numero documento atual
     $conf->incrementaNumeroDocumentoAtual($dadosBanco[0]['id_configarquivobancario']);
 }
-$idmovimentofinanceiro = $orc->novoMovimento($dados);
-print_r($dadosboleto);
-die;
+$idmovimentofinanceiro = $fin->novoMovimento($dados);
 
-$ngFinan = new ngFinanceiro($id);
-$confere = $ngFinan->novoMovimentoFinanceiro($idmovimentofinanceiro);
-
-$aux_comp = $competencia ? $competencia : $meses_competencia[$num_parcelas_geradas-1];
-$dados['dataprevistaentrega'] = $dadoscontrato['diavencimento']."/".$aux_comp;
+$dados['dataprevistaentrega'] = $dadoscontrato['diavencimento']."/".$comp_;
 $dados['datarecebimento'] = NULL;
 $dados['idmovimento'] = $idmovimentofinanceiro;
 
-$orc->novoMovimentoJustificativa($idmovimentofinanceiro, $dados['justificativa']);
-$log->salvaLogFinanceiro("INCLUIR", $id, null, $idmovimentofinanceiro, $dados['tipomovimento'], $_SESSION['id_usuario'], null, "NOVO MOV. CONTRATO");
-$contrato->cadastraMovimentoContrato($dadoscontrato['idcont_contrato'], $dados);
-$contrato->cadastraJustificativaContrato($dadoscontrato['idcont_contrato'], $_SESSION['id_usuario'], 'Gerou o movimento financeiro - Finalizado', $dados['valor'],'finalizou');
+$fin->salvaLogMovimento('incluir', $idmovimentofinanceiro, "NOVO MOV. CONTRATO", $dados['tokenuser']);
 
-$contrato->alteraLiberacaoContrato($dadoscontrato['idcont_contrato'], 'nao');
-$justificativas = $contrato->buscaJustificativaContrato($dadoscontrato['idcont_contrato'],null, 'sim');
-foreach ($justificativas as $key => $value) {
-    $contrato->cadastraMovimentoJustifcativa($value['id_justificativa'], $dadoscontrato['idcont_contrato'], $idmovimentofinanceiro);
-}
+$contrato->cadastraMovimentoContrato($idcontrato, $dados);
 
-$baixarmovimento = null;
+/*echo "<pre>";
+print_r($dados);
+die;*/
+/*$baixarmovimento = null;
 //SE O VALOR LIQUIDO MENOS O VALOR DOS DESCONTOS FOR IGUAL A 0, FAÇO A BAIXA
 $indexadordesconto = isset($dados['indexador_desconto']) ? $dados['indexador_desconto'] : 100;
 if ( ($dados['valorliquido'] - (str_replace(",", ".", $dados['desconto'][0][0]) * ($indexadordesconto/100) )) == 0 ) {
@@ -252,7 +240,7 @@ if ( ($dados['valorliquido'] - (str_replace(",", ".", $dados['desconto'][0][0]) 
 }
 
 if($baixarmovimento && $dadosBanco[0]['idcontabancariapadraobaixa']){
-    $dadosMovimentoParcela = $orc->buscaMovimentoParcelaFormaPagamento(null, $idmovimentofinanceiro, $id, $dados['tipomovimento']);
+    $dadosMovimentoParcela = $fin->buscaMovimentoParcelaFormaPagamento(null, $idmovimentofinanceiro, $id, $dados['tipomovimento']);
     $dadosMovimento = $dadosMovimentoParcela[0];        
     
     $numeromovimento = $dadosMovimento['numeromovimento'] ? $dadosMovimento['numeromovimento'] : null;
@@ -278,25 +266,19 @@ if($baixarmovimento && $dadosBanco[0]['idcontabancariapadraobaixa']){
     $dadosBaixa['idcontabancariaquitacao']      = $dadosBanco[0]['idcontabancariapadraobaixa'];
     $dadosBaixa['historicobancarioquitacao']    = $dados['historico'];
     $dadosBaixa['idusuario']                    = $_SESSION['id_usuario'];
-    $dadosBaixa['idempresa']                    = $id;
 
     //Verificando baixa para nao gerar duplicidade
     if($dadosMovimento['pagamento'] == null){
         //Baixando no SGO
         $ngFinan->baixarFormaPagamento($dadosBaixa);
         //Baixando lancamento no NG
-        $conferencia = $ngFinan->baixarFormaPagamentoNG($dadosBaixa);
-
-        //Conferindo Baixa NG e alterando no SGO em caso de problema
-        if(substr($conferencia, 0, 2) == 'OK'){
-            if(isset($valornovaparcela)){
-                $idparcelaformapagamentonew = $ngFinan->novaParcelaMovimento($dadosBaixa);
-                $_POST['idparcelaformapagamentonew'] = $idparcelaformapagamentonew ;
-                $ngFinan->novaParcelaNG($dadosBaixa);
-            }
-        }
-        else{
-            $ngFinan->excluirBaixaFormaPagamento($_POST['idparcelaformapagamento']);
-        }
     }
-}
+}*/
+
+    
+    
+echo "<script>
+        alert('Movimento gerado com sucesso para o Contrato Nº.: ".str_pad($idcontrato,7,'0', STR_PAD_LEFT)."'); 
+                window.location.href = 'cadastrarContrato.php?id_contrato=".$idcontrato."';
+        </script>";
+        die;
