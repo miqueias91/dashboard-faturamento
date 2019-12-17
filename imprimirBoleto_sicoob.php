@@ -30,7 +30,7 @@
         $dataemissao_movimento = $aux_emissao[2]."/".$aux_emissao[1]."/".$aux_emissao[0];
 
         //Busco a configuração do banco
-        $dadosBanco = $arq->buscaConfiguracaoArquivo($configboleto);
+        $dadosBanco = $arq->buscaConfiguracaoArquivo($configboleto, 'todos');
 
         // DADOS DO BOLETO PARA O CLIENTE
         $agencia = $dadosBanco[0]['numeroagencia'];// Num da agencia, sem digito

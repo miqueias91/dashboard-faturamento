@@ -14,7 +14,13 @@
 
 			$filtro = "";
 			$filtro .= isset($id_configarquivobancario) ? " AND id_configarquivobancario = :id_configarquivobancario" : "";
-			$filtro .= isset($status_configarquivobancario) ? " AND status_configarquivobancario = :status " : "";
+
+			if ($status_configarquivobancario == 'todos') {
+				$status_configarquivobancario = null;
+			}
+			else{
+				$filtro .= isset($status_configarquivobancario) ? " AND status_configarquivobancario = :status " : "";
+			}
 			
 
 			try {

@@ -33,24 +33,6 @@ body {
     overflow-x: hidden!important;
     font-size: 12px!important;
 }
-
-h1, h2, a, table{
-  font-size: 12px!important;
-}
-
-.form-control {
-    font-size: 12px!important;
-    line-height: 1.5!important;
-    padding: .5rem .75rem!important;
-    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out!important;
-    color: #12263f!important;
-    border: 1px solid #909599!important;
-    border-radius: .375rem!important;
-    background-color: #fff!important;
-    background-clip: padding-box!important;
-    text-align: left;
-}
-
 .btn-lg {
     font-size: 12px!important;
     line-height: 1.5!important;
@@ -68,6 +50,30 @@ h1, h2, a, table{
     background-color: #343a40!important;
     border-color: #212529;
 }
+.ui-state-active{
+  border: 1px solid #343a40;
+  background: #343a40!important;
+  font-weight: normal;
+  color: #ffffff;
+}
+/*
+h1, h2, a, table{
+  font-size: 12px!important;
+}
+
+.form-control {
+    font-size: 12px!important;
+    line-height: 1.5!important;
+    padding: .5rem .75rem!important;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out!important;
+    color: #12263f!important;
+    border: 1px solid #909599!important;
+    border-radius: .375rem!important;
+    background-color: #fff!important;
+    background-clip: padding-box!important;
+    text-align: left;
+}
+
 .starter-template {
   padding: 0 1.5rem 3rem 1.5rem!important;
   text-align: center!important;
@@ -93,12 +99,6 @@ main {
 input .valor {
   text-align: right!important;
 }
-.ui-state-active{
-  border: 1px solid #343a40;
-  background: #343a40!important;
-  font-weight: normal;
-  color: #ffffff;
-}
 .data {
   text-align: center!important;
-}
+}*/

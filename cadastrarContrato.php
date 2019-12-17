@@ -28,8 +28,9 @@
     }
 
     $dataatual = date("d/m/Y");
-
+    $titulo_contrato = "Cadastrar contrato";
     if ($id_contrato) {
+      $titulo_contrato = "Editar contrato";
       $dados = $cont->buscaContrato($id_contrato);
       $dado = $dados[0];
       $dadosDesconto = $cont->buscaDescontoContrato($id_contrato);
@@ -93,41 +94,13 @@
           $options_descontos .= '<option persisteapos="'.$row['persisteaposvencimento'].'" value="'.$row['id_descontotipo'].'">'.$cod_tipo.' - '.strtoupper($tipo).'</option>\\n';
       }
   }
-  else $options_descontos.= '<option value="">Nenhum registro encontrado.</option>\\n' ;
+  else {
+    $options_descontos.= '<option value="">Nenhum registro encontrado.</option>\\n' ;
+  }
+
+  include_once 'header.php'; 
+
 ?>
-
-<html lang="pt-br">
-  <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="Página Inicio">
-        <meta name="author" content="Miqueias Matias Caetano">
-        <meta name="keywords" content="Página Inicio">
-        <meta content="pt-br, pt, en" http-equiv="Content-Language">
-        <meta name="revised" content="2019-12-29">
-
-
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="<?=$PATH_CSS;?>/bootstrap.min.css">
-        <link rel="stylesheet" href="./fontawesome-free-5.6.3-web/css/all.css">
-        <link rel="stylesheet" href="css/jquery-ui.css">
-
-        <!-- Optional Google Fonts -->
-        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
-        <link rel="stylesheet" href="<?=$PATH_CSS;?>/stylesheet.css">
-
-        <!-- Optional JavaScript -->
-        <script src="<?=$PATH_JS;?>/jquery-3.4.1.min.js"></script>
-        <script src="<?=$PATH_JS;?>/popper.min.js"></script>
-        <script src="<?=$PATH_JS;?>/bootstrap.min.js"></script>
-        <script src="<?=$PATH_JS;?>/jquery.mask.js"></script>
-        <script src="<?=$PATH_JS;?>/maskMoney.js" language="javascript"></script>
-        <script src="js/jquery-ui.js"></script>
-
-
-  </head>
-  <body>
     <style type="text/css">
       h3 {
         text-align: left;
@@ -141,6 +114,7 @@
         });
 
         $( document ).ready(function() {
+          $("#titulo").html("<?=$titulo_contrato?>");
           $( "#accordion" ).accordion();
 
           $( "#divboletos" ).dialog({
@@ -625,13 +599,10 @@
 
 
     </script>
-    <?=include_once("./menu.php");?>
-    <main role="main" class="container">
-      <div class="starter-template">
         <form action='salvarContrato.php' method='post' name='form' class="" id='form' enctype='multipart/form-data'>
           <input type="hidden" id="verificaLinhasDescontos" value="">
           
-          <div id='divboletos' style="display:none;width:800px;height:500px" class="dialogo" title='Impressão de boletos'  align='center'>
+          <div id='divboletos' style="display:none;width:800px;height:500px;overflow-y: hidden;" class="dialogo" title='Impressão de boletos'  align='center' scrolling="no">
             <iframe src="" name="iframeboleto" id='iframeboleto' style="background: white;" width='100%' height='100%' frameborder='0'></iframe>
           </div> 
           <div class="modal fade" id="modalMovimento" tabindex="-1" role="dialog" aria-labelledby="modalMovimentoLabel" aria-hidden="true">
@@ -1017,7 +988,4 @@
             </div>
           </div>
         </form>
-      </div>
-    </main><!-- /.container -->
-  </body>
-</html>
+<?= include_once 'footer.php'; ?>
