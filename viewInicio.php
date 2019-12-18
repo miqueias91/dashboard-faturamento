@@ -1,137 +1,78 @@
     <?php include_once 'header.php'; ?>
 
+    
+
 
 
       <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
 
-      <h2>Section title</h2>
-      <div class="table-responsive">
-        <table class="table table-striped table-sm">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Header</th>
-              <th>Header</th>
-              <th>Header</th>
-              <th>Header</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1,001</td>
-              <td>Lorem</td>
-              <td>ipsum</td>
-              <td>dolor</td>
-              <td>sit</td>
-            </tr>
-            <tr>
-              <td>1,002</td>
-              <td>amet</td>
-              <td>consectetur</td>
-              <td>adipiscing</td>
-              <td>elit</td>
-            </tr>
-            <tr>
-              <td>1,003</td>
-              <td>Integer</td>
-              <td>nec</td>
-              <td>odio</td>
-              <td>Praesent</td>
-            </tr>
-            <tr>
-              <td>1,003</td>
-              <td>libero</td>
-              <td>Sed</td>
-              <td>cursus</td>
-              <td>ante</td>
-            </tr>
-            <tr>
-              <td>1,004</td>
-              <td>dapibus</td>
-              <td>diam</td>
-              <td>Sed</td>
-              <td>nisi</td>
-            </tr>
-            <tr>
-              <td>1,005</td>
-              <td>Nulla</td>
-              <td>quis</td>
-              <td>sem</td>
-              <td>at</td>
-            </tr>
-            <tr>
-              <td>1,006</td>
-              <td>nibh</td>
-              <td>elementum</td>
-              <td>imperdiet</td>
-              <td>Duis</td>
-            </tr>
-            <tr>
-              <td>1,007</td>
-              <td>sagittis</td>
-              <td>ipsum</td>
-              <td>Praesent</td>
-              <td>mauris</td>
-            </tr>
-            <tr>
-              <td>1,008</td>
-              <td>Fusce</td>
-              <td>nec</td>
-              <td>tellus</td>
-              <td>sed</td>
-            </tr>
-            <tr>
-              <td>1,009</td>
-              <td>augue</td>
-              <td>semper</td>
-              <td>porta</td>
-              <td>Mauris</td>
-            </tr>
-            <tr>
-              <td>1,010</td>
-              <td>massa</td>
-              <td>Vestibulum</td>
-              <td>lacinia</td>
-              <td>arcu</td>
-            </tr>
-            <tr>
-              <td>1,011</td>
-              <td>eget</td>
-              <td>nulla</td>
-              <td>Class</td>
-              <td>aptent</td>
-            </tr>
-            <tr>
-              <td>1,012</td>
-              <td>taciti</td>
-              <td>sociosqu</td>
-              <td>ad</td>
-              <td>litora</td>
-            </tr>
-            <tr>
-              <td>1,013</td>
-              <td>torquent</td>
-              <td>per</td>
-              <td>conubia</td>
-              <td>nostra</td>
-            </tr>
-            <tr>
-              <td>1,014</td>
-              <td>per</td>
-              <td>inceptos</td>
-              <td>himenaeos</td>
-              <td>Curabitur</td>
-            </tr>
-            <tr>
-              <td>1,015</td>
-              <td>sodales</td>
-              <td>ligula</td>
-              <td>in</td>
-              <td>libero</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <!-- Icon Cards-->
+        <div class="row">
+          <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-primary o-hidden h-100">
+              <div class="card-body">
+                <div class="card-body-icon">
+                  <i class="fas fa-fw fa-money-bill-wave-alt"></i>
+                </div>
+                <div class="mr-5">200,00 Receita</div>
+              </div>
+              <a class="card-footer text-white clearfix small z-1" href="#">
+                <span class="float-left">Ver detalhe</span>
+                <span class="float-right">
+                  <i class="fas fa-angle-right"></i>
+                </span>
+              </a>
+            </div>
+          </div>
+          <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-warning o-hidden h-100">
+              <div class="card-body">
+                <div class="card-body-icon">
+                  <i class="fas fa-fw fa-file"></i>
+                </div>
+                <div class="mr-5">11 Contratos</div>
+              </div>
+              <a class="card-footer text-white clearfix small z-1" href="#">
+                <span class="float-left">Ver detalhe</span>
+                <span class="float-right">
+                  <i class="fas fa-angle-right"></i>
+                </span>
+              </a>
+            </div>
+          </div>
+          <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-success o-hidden h-100">
+              <div class="card-body">
+                <div class="card-body-icon">
+                  <i class="fas fa-fw fa-shopping-cart"></i>
+                </div>
+                <div class="mr-5">123 Serviços</div>
+              </div>
+              <a class="card-footer text-white clearfix small z-1" href="#">
+                <span class="float-left">Ver detalhe</span>
+                <span class="float-right">
+                  <i class="fas fa-angle-right"></i>
+                </span>
+              </a>
+            </div>
+          </div>
+          <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-danger o-hidden h-100">
+              <div class="card-body">
+                <div class="card-body-icon">
+                  <i class="fas fa-fw fa-users"></i>
+                </div>
+                <div class="mr-5">13 Clientes</div>
+              </div>
+              <a class="card-footer text-white clearfix small z-1" href="#">
+                <span class="float-left">Ver detalhe</span>
+                <span class="float-right">
+                  <i class="fas fa-angle-right"></i>
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
     
     <script src="<?=$PATH_JS;?>/Chart.min.js"></script>
     <?= include_once 'footer.php'; ?>
